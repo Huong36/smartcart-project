@@ -2,6 +2,10 @@
 
 Có 5 bảng nghiệp vụ. Những bảng sessions, cache, jobs và password_reset_tokens được Laravel tạo để hỗ trợ framework, không phải bảng nghiệp vụ bổ sung.
 
+![ERD theo migration](diagrams/smartcart-erd.png)
+
+[Nguồn draw.io chỉnh sửa](diagrams/smartcart-erd.drawio). Hình thể hiện PK/FK/UK, cột nullable và quan hệ 1–0..N. Bản Mermaid bên dưới là phiên bản gọn để đọc trực tiếp trên GitHub.
+
 ```mermaid
 erDiagram
     USERS ||--o{ ORDERS : places

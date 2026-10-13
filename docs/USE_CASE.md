@@ -2,34 +2,17 @@
 
 Phạm vi bên dưới mô tả toàn bộ đề tài dự kiến. Bộ khung hiện đã triển khai đăng ký, đăng nhập/đăng xuất, tài khoản, phân quyền và tổng quan Admin. Các chức năng mua hàng/CRUD còn lại thuộc các thành viên 2–4.
 
-```mermaid
-flowchart LR
-    G[Khách vãng lai]
-    C[Khách hàng]
-    A[Quản trị viên]
-    API[API tỷ giá hoặc thời tiết]
-    subgraph SmartCart
-        Browse([Xem danh sách và chi tiết sản phẩm])
-        Search([Lọc, tìm kiếm và phân trang])
-        Register([Đăng ký tài khoản])
-        Login([Đăng nhập và đăng xuất])
-        Profile([Xem tài khoản])
-        Cart([Thêm, sửa, xóa giỏ hàng])
-        Checkout([Đặt hàng])
-        History([Xem đơn hàng cá nhân])
-        Dashboard([Xem tổng quan cửa hàng])
-        Categories([CRUD danh mục])
-        Products([CRUD sản phẩm và upload ảnh])
-        Orders([Duyệt và cập nhật trạng thái đơn])
-        Widget([Xem tiện ích API])
-    end
-    G --- Browse & Search & Register & Login & Widget
-    C --- Browse & Search & Login & Profile & Cart & Checkout & History & Widget
-    A --- Login & Profile & Dashboard & Categories & Products & Orders
-    API --- Widget
-```
+## Sơ đồ UML khách vãng lai và khách hàng
 
-Sơ đồ Mermaid là nguồn tham khảo quan hệ actor–chức năng. Khi viết báo cáo, dùng bảng dưới để dựng sơ đồ UML Use Case chính thức với actor, biên hệ thống và oval trong draw.io; flowchart trên không thể hiện đầy đủ ký pháp UML.
+![UML khách hàng](diagrams/smartcart-usecase-client.png)
+
+## Sơ đồ UML quản trị viên
+
+![UML quản trị viên](diagrams/smartcart-usecase-admin.png)
+
+Các sơ đồ dùng actor bên ngoài biên hệ thống, use case hình oval và đường liên kết không hướng. Sơ đồ mô tả phạm vi chức năng, không xác nhận chức năng đã lập trình. Các tiền điều kiện auth/role được ghi trong bảng dưới.
+
+Nguồn chỉnh sửa: [khách hàng](diagrams/smartcart-usecase-client.drawio), [quản trị viên](diagrams/smartcart-usecase-admin.drawio). Mở bằng app.diagrams.net hoặc draw.io Desktop. Bản PNG dùng để chèn báo cáo.
 
 | Actor | Use Case chính | Điều kiện |
 |---|---|---|

@@ -107,6 +107,14 @@ Chấp nhận lời mời collaborator, clone bộ khung, tự tạo branch và 
 
 Trưởng nhóm kiểm tra rồi merge. Xem [phân công chi tiết](docs/TEAM.md). Báo cáo Word/PDF cuối cùng sẽ được viết khi các module hoàn thiện và có ảnh demo thực tế.
 
+## Tài liệu báo cáo và nghiệm thu
+
+- [Khung báo cáo Word](docs/report/Bao_Cao_SmartCart.docx): yêu cầu, thiết kế, các sơ đồ, chức năng, phân công và kiểm thử nền tảng. Thông tin lớp/giảng viên/MSSV và tên thành viên 2–4 để trống để nhóm điền. Các phần chưa triển khai được ghi là dự kiến.
+- [ERD](docs/ERD.md) và [UML Use Case](docs/USE_CASE.md): có ảnh PNG để chèn báo cáo và nguồn draw.io chỉnh sửa trong docs/diagrams.
+- [Checklist kiểm thử tích hợp](docs/TEST_CHECKLIST.md): trạng thái đã qua nền tảng tách biệt với ca chưa chạy. Cập nhật kết quả và bằng chứng theo commit sau khi ghép module.
+
+Báo cáo cuối cần bổ sung ảnh demo thực tế, kết quả nghiệm thu toàn hệ thống và thông tin nhóm trước khi nộp.
+
 ## Tài liệu nền tảng
 
 - [Laravel 13](https://laravel.com/docs/13.x)

@@ -60,7 +60,7 @@ git merge origin/main
 ## Trạng thái bàn giao
 
 - [x] Nền tảng, CSDL, Auth/role, dữ liệu mẫu, giao diện nền, tổng quan Admin.
-- [x] Hướng dẫn setup, quy ước nhóm, ERD và sơ đồ Use Case dạng nguồn.
+- [x] Hướng dẫn setup, quy ước nhóm, ERD/UML dạng ảnh và draw.io, khung báo cáo Word và checklist kiểm thử tích hợp.
 - [ ] CRUD danh mục/sản phẩm, upload ảnh và validation tương ứng.
 - [ ] Chi tiết sản phẩm, search/filter/phân trang hoàn chỉnh.
 - [ ] Cart, checkout, lịch sử/duyệt đơn, live search và API ngoài.
