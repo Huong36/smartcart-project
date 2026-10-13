@@ -1,0 +1,24 @@
+:root { --bs-primary: #08796a; --ink: #172e2a; --muted: #60756f; }
+body { min-height: 100vh; display: flex; flex-direction: column; background: #fafcfb; color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: #08796a; }
+a:hover { color: #045c50; }
+.btn-primary { --bs-btn-bg: #08796a; --bs-btn-border-color: #08796a; --bs-btn-hover-bg: #056456; --bs-btn-hover-border-color: #056456; --bs-btn-active-bg: #045449; --bs-btn-active-border-color: #045449; border-radius: .65rem; font-weight: 600; }
+.brand { display: inline-flex; align-items: center; gap: .6rem; font-weight: 800; letter-spacing: -.8px; font-size: 1.5rem; color: var(--ink); }
+.brand-mark { display: inline-grid; place-items: center; background: #08796a; color: white; width: 36px; height: 36px; border-radius: 10px; font-size: 1.25rem; }
+.brand-dot { color: #08796a; margin-left: -.6rem; }
+.eyebrow { letter-spacing: .14em; font-size: .72rem; font-weight: 750; color: #08796a; margin-bottom: 1rem; }
+.hero { background: #e8f3ee; border-radius: 1.5rem; padding: 3.5rem; }
+.hero h1, .auth-shell h1 { letter-spacing: -.045em; line-height: 1.15; }
+.hero-symbol { width: 230px; height: 230px; background: #08796a; color: #fff; border-radius: 3.5rem; transform: rotate(-8deg); font-size: 10rem; font-weight: 800; display: grid; place-content: center; position: relative; margin: auto; }
+.hero-symbol span { position: absolute; right: -20px; top: -24px; font-size: 4rem; background: #d8e7a1; color: #294423; width: 75px; height: 75px; border-radius: 50%; line-height: 65px; text-align: center; }
+.product-card { border: 1px solid #e1eae6; border-radius: 1rem; overflow: hidden; background: white; }
+.product-card img { aspect-ratio: 4/3; object-fit: contain; background: #eef3f0; }
+.product-card .card-body { padding: 1.25rem; }
+.price { color: #08796a; }
+.form-panel, .stat-panel { background: white; border: 1px solid #e1eae6; border-radius: 1.25rem; padding: 2rem; }
+.form-control { padding: .8rem 1rem; border-radius: .6rem; }
+.form-control:focus { border-color: #08796a; box-shadow: 0 0 0 .2rem #08796a26; }
+.form-check-input:checked { background-color: #08796a; border-color: #08796a; }
+.auth-shell { min-height: 580px; }
+.auth-decoration { border-left: 5px solid #08796a; padding-left: 1.25rem; font-size: 2rem; color: #08796a; display: flex; gap: .5rem; }
+@media(max-width: 767px) { .hero { padding: 2rem 1.5rem; } .form-panel { padding: 1.5rem; } .auth-shell { min-height: auto; } .display-4 { font-size: 2.4rem; } .product-card .card-body { padding: .9rem; } }

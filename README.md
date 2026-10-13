@@ -1,0 +1,116 @@
+# SmartCart
+
+Bộ khung website bán hàng cho bài tập lớn môn Mã Nguồn Mở, nhóm 4 thành viên. Laravel 13 + MySQL + Eloquent + Blade + Bootstrap 5.
+
+Đã có: CSDL 5 bảng nghiệp vụ, model/quan hệ, seeder, đăng ký/đăng nhập/đăng xuất, phân quyền Admin–Customer, trang tài khoản, trang chủ mẫu và tổng quan Admin. CRUD, giỏ hàng, checkout, tìm kiếm/phân trang và API ngoài sẽ được các thành viên 2–4 triển khai tiếp. Đây chưa phải sản phẩm hoàn chỉnh để nộp bài.
+
+## Cài đặt trên máy thành viên
+
+Yêu cầu PHP **8.3 trở lên**, Composer 2, MySQL 8, Git. Bật MySQL trong Laragon và dùng Terminal của Laragon để PHP/Composer có trong PATH. Nếu Composer báo thiếu ZIP, bật `extension=zip` trong php.ini của PHP đang dùng; kiểm tra bằng `php --ini` và `php -m`.
+
+```bash
+git clone https://github.com/Huong36/smartcart-project.git
+cd smartcart-project
+composer install
+```
+
+Tạo database trống qua HeidiSQL hoặc MySQL:
+
+```sql
+CREATE DATABASE smartcart_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Trong PowerShell, sao chép cấu hình:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Linux/macOS dùng `cp .env.example .env`. Sửa DB_USERNAME/DB_PASSWORD trong `.env` theo MySQL của máy bạn. Mặc định của dự án:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=smartcart_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Sau đó:
+
+```bash
+php artisan key:generate
+php artisan migrate --seed
+php artisan storage:link
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+Mở http://127.0.0.1:8000. Với server Artisan, chỉ cần MySQL hoạt động; không bắt buộc bật Apache. Nếu dùng Apache/Laragon virtual host, document root phải trỏ vào `public/`, không trỏ vào thư mục gốc Laravel.
+
+CSS/JS Bootstrap đã lưu cục bộ. Các trang hiện tại dùng CSS trực tiếp trong `public/css/app.css`, không dùng `@vite`, nên không cần npm để chạy bộ khung.
+
+## Tài khoản chạy thử
+
+Chỉ được tạo ở APP_ENV=local hoặc testing, phục vụ demo trên máy cá nhân:
+
+| Vai trò | Email | Mật khẩu |
+|---|---|---|
+| Admin | admin@gmail.com | 12345678 |
+| Customer | user@gmail.com | 12345678 |
+
+Đăng ký mới luôn tạo Customer. Admin đăng nhập được chuyển đến `/admin`, Customer đến `/account`; Customer truy cập `/admin` nhận 403. Seeder cũng tạo 5 danh mục và 30 sản phẩm, dùng ảnh placeholder chung để chạy ngay. Chạy lại `php artisan db:seed` không tạo trùng và không reset mật khẩu tài khoản đã có.
+
+Không dùng tài khoản demo ở môi trường công khai. `.env`, APP_KEY, vendor, log, database local và ảnh upload không được commit. Khi triển khai thật, dùng APP_ENV=production, APP_DEBUG=false, HTTPS và thông tin DB/tài khoản riêng.
+
+## Cấu trúc để tiếp tục phát triển
+
+| Đường dẫn | Nội dung |
+|---|---|
+| app/Models | User, Category, Product, Order, OrderItem |
+| database/migrations | Migration nền Laravel và 5 migration SmartCart |
+| database/seeders | Tài khoản demo và catalog |
+| app/Http/Controllers/AuthController.php | Đăng ký, đăng nhập, đăng xuất |
+| app/Http/Middleware/CheckRole.php | Middleware role:admin |
+| resources/views/layouts/app.blade.php | Layout Bootstrap chung, meta CSRF, vùng styles/scripts |
+| routes/web.php | Route public, guest, auth và admin |
+| docs/TEAM.md | Phân công, branch, giao diện tích hợp, quy tắc nghiệp vụ |
+| docs/ERD.md | Schema và sơ đồ ERD |
+| docs/USE_CASE.md | Actor và chức năng dự kiến để dựng UML |
+
+Danh mục còn sản phẩm và sản phẩm đã được đặt hàng bị chặn xóa bằng khóa ngoại. Order item lưu `product_name` và `price` tại thời điểm mua. Thống nhất với nhóm trước khi sửa cấu trúc dữ liệu. Xem chi tiết trong [quy ước nhóm](docs/TEAM.md).
+
+## Kiểm tra
+
+```bash
+php artisan test
+php vendor/bin/pint --test
+```
+
+Mặc định kiểm thử dùng SQLite in-memory, tách biệt database MySQL chạy ứng dụng. Các test kiểm tra đăng ký/validation, chống tự nâng role, đăng nhập đúng/sai và giới hạn lần thử, đăng xuất, phân quyền và quan hệ/khóa ngoại, seeder chạy lại.
+
+Để kiểm tra MySQL, tạo database **smartcart_test** riêng và sao chép phpunit.xml thành phpunit.mysql.local.xml. Đổi DB_CONNECTION thành mysql, DB_DATABASE thành smartcart_test, thêm DB_HOST/PORT/USERNAME/PASSWORD phù hợp với `force="true"`. Sau đó chạy:
+
+```bash
+php artisan test --configuration phpunit.mysql.local.xml
+```
+
+Test RefreshDatabase sẽ làm mới database test; luôn kiểm tra đúng tên smartcart_test trước khi chạy. File cấu hình MySQL local đã được gitignore.
+
+## Quy trình nhóm
+
+Chấp nhận lời mời collaborator, clone bộ khung, tự tạo branch và mở Pull Request vào main. Mỗi người dùng tài khoản Git của mình để có lịch sử đóng góp rõ ràng.
+
+- Thành viên 2: `feat/admin-products`
+- Thành viên 3: `feat/client-orders`
+- Thành viên 4: `feat/cart-search`
+
+Trưởng nhóm kiểm tra rồi merge. Xem [phân công chi tiết](docs/TEAM.md). Báo cáo Word/PDF cuối cùng sẽ được viết khi các module hoàn thiện và có ảnh demo thực tế.
+
+## Tài liệu nền tảng
+
+- [Laravel 13](https://laravel.com/docs/13.x)
+- [Laravel Authentication](https://laravel.com/docs/13.x/authentication)
+- [Bootstrap 5.3](https://getbootstrap.com/docs/5.3/)
+
+Bootstrap 5.3.3 được phân phối theo MIT, xem public/vendor/bootstrap/LICENSE.
