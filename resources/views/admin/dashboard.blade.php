@@ -1,5 +1,5 @@
-@extends('layouts.app')
-@section('title', 'Quản trị')
+@extends('layouts.admin')
+@section('title', 'Tổng quan Quản trị')
 @section('content')
 <p class="eyebrow">QUẢN TRỊ SMARTCART</p>
 <h1 class="h2 fw-bold mb-2">Tổng quan cửa hàng</h1>

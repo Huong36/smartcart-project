@@ -26,11 +26,13 @@ class CatalogSeeder extends Seeder
             ]);
 
             foreach ($products as [$productName, $price]) {
-                Product::firstOrCreate(['category_id' => $category->id, 'name' => $productName], [
+                $imagePath = 'products/'.Str::slug($productName).'.png';
+
+                Product::updateOrCreate(['category_id' => $category->id, 'name' => $productName], [
                     'price' => $price,
                     'stock' => 20,
                     'description' => $productName.' — sản phẩm mẫu phục vụ chạy thử SmartCart.',
-                    'image' => null,
+                    'image' => $imagePath,
                 ]);
             }
         }
