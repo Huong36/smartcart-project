@@ -22,3 +22,50 @@ a:hover { color: #045c50; }
 .auth-shell { min-height: 580px; }
 .auth-decoration { border-left: 5px solid #08796a; padding-left: 1.25rem; font-size: 2rem; color: #08796a; display: flex; gap: .5rem; }
 @media(max-width: 767px) { .hero { padding: 2rem 1.5rem; } .form-panel { padding: 1.5rem; } .auth-shell { min-height: auto; } .display-4 { font-size: 2.4rem; } .product-card .card-body { padding: .9rem; } }
+
+/* Live Search Dropdown */
+.search-wrapper { position: relative; min-width: 280px; }
+.search-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 1050;
+    background: #ffffff;
+    border: 1px solid #dce8e3;
+    border-radius: 0.85rem;
+    box-shadow: 0 12px 32px rgba(8, 121, 106, 0.12);
+    overflow: hidden;
+    max-height: 420px;
+    overflow-y: auto;
+}
+.search-item { transition: background-color 0.15s ease-in-out; border-bottom: 1px solid #f0f4f2; }
+.search-item:last-child { border-bottom: none; }
+.search-item:hover, .search-item.active { background-color: #f1f8f5 !important; }
+
+/* Cart Badge & Counter */
+.cart-nav-link { position: relative; padding-right: 0.8rem; }
+.cart-badge-pill {
+    position: absolute;
+    top: 2px;
+    right: -4px;
+    font-size: 0.7rem;
+    padding: 0.25em 0.55em;
+    border-radius: 50rem;
+    background-color: #e04838;
+    color: #fff;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* Cart Table and Counter */
+.cart-item-row td { padding-top: 1rem; padding-bottom: 1rem; }
+.btn-qty-minus, .btn-qty-plus { width: 32px; font-weight: bold; }
+
+/* Weather Widget */
+.weather-footer-box {
+    background: #f2f7f4;
+    border: 1px solid #e1ece7;
+    border-radius: 0.85rem;
+    padding: 0.75rem 1.25rem;
+}
