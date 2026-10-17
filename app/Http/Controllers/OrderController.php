@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -19,5 +20,15 @@ class OrderController extends Controller
         return view('orders.show', [
             'order' => $request->user()->orders()->with('items')->findOrFail($order),
         ]);
+    }
+
+    public function cancel(Request $request, int $order): RedirectResponse
+    {
+        $ownedOrder = $request->user()->orders()->findOrFail($order);
+        $cancelled = $ownedOrder->cancel($request->user());
+
+        return redirect()->route('orders.show', $ownedOrder)->with('success', $cancelled
+            ? 'Đã hủy đơn hàng và hoàn lại số lượng sản phẩm vào kho.'
+            : 'Đơn hàng đã được hủy trước đó.');
     }
 }

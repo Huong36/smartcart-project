@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->whereNumber('order')->name('orders.show');
+    Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->whereNumber('order')->name('orders.cancel');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::view('/account', 'account')->name('account');
 });
@@ -52,4 +53,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::resource('categories', CategoryController::class);
     Route::resource('products', ProductController::class);
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'update']);
+    Route::patch('orders/{order}/cancel', [AdminOrderController::class, 'cancel'])->whereNumber('order')->name('orders.cancel');
 });

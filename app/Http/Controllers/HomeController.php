@@ -23,7 +23,8 @@ class HomeController extends Controller
             $query->where('category_id', $filters['category_id']);
         }
 
-        if ($keyword = trim($filters['q'] ?? '')) {
+        $keyword = trim($filters['q'] ?? '');
+        if ($keyword !== '') {
             $query->where('name', 'like', '%'.$keyword.'%');
         }
 

@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class ClientOrdersTest extends TestCase
@@ -224,6 +225,186 @@ class ClientOrdersTest extends TestCase
     private function checkoutData(string $token): array
     {
         return ['shipping_address' => '123 Nguyễn Trãi, TP.HCM', 'phone' => '0901234567', 'note' => 'Gọi trước khi giao', 'checkout_token' => $token];
+    }
+
+    public function test_zero_keyword_is_filtered_and_preserved_with_category_sort_and_pagination(): void
+    {
+        $category = Category::factory()->create();
+        Product::factory()->count(10)->create(['name' => 'Mẫu 0', 'category_id' => $category->id]);
+        Product::factory()->create(['name' => 'Không liên quan', 'category_id' => $category->id]);
+        Product::factory()->create(['name' => 'Mẫu 0 danh mục khác']);
+        $this->get('/?q=0&category_id='.$category->id.'&sort=price_asc')->assertOk()
+            ->assertViewHas('products', fn ($products) => $products->total() === 10
+                && $products->count() === 8
+                && str_contains($products->nextPageUrl(), 'q=0')
+                && str_contains($products->nextPageUrl(), 'sort=price_asc'));
+        $this->get('/?q=0&category_id='.$category->id.'&sort=price_asc&page=2')->assertOk()
+            ->assertViewHas('products', fn ($products) => $products->count() === 2 && $products->total() === 10);
+        $this->get('/?q=%200%20')->assertOk()
+            ->assertViewHas('products', fn ($products) => $products->total() === 11);
+        $this->get('/?q=')->assertOk()->assertViewHas('products', fn ($products) => $products->total() === 12);
+    }
+
+    public function test_customer_cancels_own_pending_order_and_restores_each_product_quantity(): void
+    {
+        [$owner, $order, $first, $second] = $this->cancellableOrder();
+        $this->actingAs($owner)->get('/orders/'.$order->id)->assertOk()->assertSee('Hủy đơn hàng');
+        $this->patch('/orders/'.$order->id.'/cancel')->assertRedirect('/orders/'.$order->id)
+            ->assertSessionHasNoErrors()->assertSessionHas('success');
+        $this->assertSame(Order::STATUS_CANCELLED, $order->fresh()->status);
+        $this->assertSame(7, $first->fresh()->stock);
+        $this->assertSame(10, $second->fresh()->stock);
+        $this->assertDatabaseCount('order_items', 2);
+        $this->get('/orders/'.$order->id)->assertOk()->assertSee('Đã hủy')->assertDontSee('Hủy đơn hàng');
+    }
+
+    public function test_repeated_cancellation_by_customer_and_admin_does_not_restore_stock_twice(): void
+    {
+        [$owner, $order, $first, $second] = $this->cancellableOrder();
+        $this->actingAs($owner)->patch('/orders/'.$order->id.'/cancel')->assertSessionHasNoErrors();
+        $this->patch('/orders/'.$order->id.'/cancel')->assertSessionHasNoErrors();
+        $this->actingAs(User::factory()->create(['role' => User::ROLE_ADMIN]))
+            ->patch('/admin/orders/'.$order->id.'/cancel')->assertSessionHasNoErrors();
+        $this->assertSame(Order::STATUS_CANCELLED, $order->fresh()->status);
+        $this->assertSame(7, $first->fresh()->stock);
+        $this->assertSame(10, $second->fresh()->stock);
+    }
+
+    public function test_admin_can_cancel_pending_or_processing_orders(): void
+    {
+        $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
+        foreach ([Order::STATUS_PENDING, Order::STATUS_PROCESSING] as $status) {
+            [, $order, $first, $second] = $this->cancellableOrder($status);
+            $this->actingAs($admin)->get('/admin/orders/'.$order->id)->assertOk()->assertSee('Hủy đơn hàng');
+            $this->patch('/admin/orders/'.$order->id.'/cancel')->assertRedirect('/admin/orders/'.$order->id)
+                ->assertSessionHasNoErrors();
+            $this->assertSame(Order::STATUS_CANCELLED, $order->fresh()->status);
+            $this->assertSame(7, $first->fresh()->stock);
+            $this->assertSame(10, $second->fresh()->stock);
+        }
+    }
+
+    public function test_customer_cannot_cancel_processing_order_and_nobody_can_cancel_completed_order(): void
+    {
+        [$owner, $order, $first, $second] = $this->cancellableOrder(Order::STATUS_PROCESSING);
+        $this->actingAs($owner)->get('/orders/'.$order->id)->assertOk()->assertDontSee('Hủy đơn hàng');
+        $this->patch('/orders/'.$order->id.'/cancel')->assertSessionHasErrors('status');
+        $this->assertSame(Order::STATUS_PROCESSING, $order->fresh()->status);
+        $order->update(['status' => Order::STATUS_COMPLETED]);
+        $this->patch('/orders/'.$order->id.'/cancel')->assertSessionHasErrors('status');
+        $this->actingAs(User::factory()->create(['role' => User::ROLE_ADMIN]))
+            ->patch('/admin/orders/'.$order->id.'/cancel')->assertSessionHasErrors('status');
+        $this->get('/admin/orders/'.$order->id)->assertOk()->assertDontSee('Hủy đơn hàng');
+        $this->assertSame(Order::STATUS_COMPLETED, $order->fresh()->status);
+        $this->assertSame(5, $first->fresh()->stock);
+        $this->assertSame(7, $second->fresh()->stock);
+    }
+
+    public function test_cancellation_requires_login_ownership_and_admin_role(): void
+    {
+        [$owner, $order, $first] = $this->cancellableOrder();
+        $this->patch('/orders/'.$order->id.'/cancel')->assertRedirect('/login');
+        $this->patch('/admin/orders/'.$order->id.'/cancel')->assertRedirect('/login');
+        $other = User::factory()->create();
+        $this->actingAs($other)->patch('/orders/'.$order->id.'/cancel')->assertNotFound();
+        $this->actingAs($owner)->patch('/admin/orders/'.$order->id.'/cancel')->assertForbidden();
+        $this->assertSame(Order::STATUS_PENDING, $order->fresh()->status);
+        $this->assertSame(5, $first->fresh()->stock);
+    }
+
+    public function test_cancelled_order_cannot_be_advanced_to_shipping_or_completion(): void
+    {
+        [$owner, $order, $first] = $this->cancellableOrder();
+        $this->actingAs($owner)->patch('/orders/'.$order->id.'/cancel')->assertSessionHasNoErrors();
+        $this->actingAs(User::factory()->create(['role' => User::ROLE_ADMIN]));
+        foreach ([Order::STATUS_PROCESSING, Order::STATUS_COMPLETED] as $status) {
+            $this->patch('/admin/orders/'.$order->id, ['status' => $status])->assertSessionHasErrors('status');
+        }
+        $this->assertSame(Order::STATUS_CANCELLED, $order->fresh()->status);
+        $this->assertSame(7, $first->fresh()->stock);
+    }
+
+    public function test_cancellation_rechecks_database_status_instead_of_a_stale_order_instance(): void
+    {
+        [$owner, $order, $first] = $this->cancellableOrder();
+        Order::whereKey($order->id)->update(['status' => Order::STATUS_COMPLETED]);
+        try {
+            $order->cancel($owner);
+            $this->fail('A stale pending order must not cancel a completed order.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('status', $exception->errors());
+        }
+        $this->assertSame(Order::STATUS_COMPLETED, $order->fresh()->status);
+        $this->assertSame(5, $first->fresh()->stock);
+    }
+
+    public function test_cancellation_rolls_back_earlier_stock_changes_when_a_later_product_fails(): void
+    {
+        [$owner, $order, $first, $second] = $this->cancellableOrder();
+        Product::updating(function (Product $product) use ($second): void {
+            if ($product->id === $second->id) {
+                throw new \RuntimeException('Simulated stock restoration failure');
+            }
+        });
+        $this->actingAs($owner)->withoutExceptionHandling();
+        try {
+            $this->patch('/orders/'.$order->id.'/cancel');
+            $this->fail('Expected a stock restoration failure');
+        } catch (\RuntimeException $exception) {
+            $this->assertSame('Simulated stock restoration failure', $exception->getMessage());
+        } finally {
+            Product::flushEventListeners();
+        }
+        $this->assertSame(Order::STATUS_PENDING, $order->fresh()->status);
+        $this->assertSame(5, $first->fresh()->stock);
+        $this->assertSame(7, $second->fresh()->stock);
+        $this->assertDatabaseCount('order_items', 2);
+    }
+
+    public function test_cancellation_rolls_back_all_stock_when_status_update_fails_and_can_be_retried(): void
+    {
+        [$owner, $order, $first, $second] = $this->cancellableOrder();
+        Order::updating(function (Order $updating): void {
+            if ($updating->status === Order::STATUS_CANCELLED) {
+                throw new \RuntimeException('Simulated cancellation status failure');
+            }
+        });
+        $this->actingAs($owner)->withoutExceptionHandling();
+        try {
+            $this->patch('/orders/'.$order->id.'/cancel');
+            $this->fail('Expected a cancellation status failure');
+        } catch (\RuntimeException $exception) {
+            $this->assertSame('Simulated cancellation status failure', $exception->getMessage());
+        } finally {
+            Order::flushEventListeners();
+        }
+        $this->assertSame(Order::STATUS_PENDING, $order->fresh()->status);
+        $this->assertSame(5, $first->fresh()->stock);
+        $this->assertSame(7, $second->fresh()->stock);
+        $this->patch('/orders/'.$order->id.'/cancel')->assertRedirect('/orders/'.$order->id);
+        $this->assertSame(Order::STATUS_CANCELLED, $order->fresh()->status);
+        $this->assertSame(7, $first->fresh()->stock);
+        $this->assertSame(10, $second->fresh()->stock);
+    }
+
+    /** @return array{User, Order, Product, Product} */
+    private function cancellableOrder(string $status = Order::STATUS_PENDING): array
+    {
+        $owner = User::factory()->create();
+        $order = $this->makeOrder($owner);
+        $order->update(['status' => $status]);
+        $first = Product::factory()->create(['stock' => 5]);
+        $second = Product::factory()->create(['stock' => 7]);
+        foreach ([[$first, 2], [$second, 3]] as [$product, $quantity]) {
+            $order->items()->create([
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'price' => $product->price,
+                'quantity' => $quantity,
+            ]);
+        }
+
+        return [$owner, $order, $first, $second];
     }
 
     private function makeOrder(User $user): Order

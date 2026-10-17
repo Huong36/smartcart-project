@@ -10,7 +10,8 @@ Nhánh `feat/client-orders` phát triển từ `integration/admin-cart`: có CSD
 - Chi tiết sản phẩm: `/products/{id}`, ảnh, mô tả, tồn kho và thêm giỏ bằng Fetch.
 - Thanh toán: `/checkout`, yêu cầu đăng nhập, nhập địa chỉ/điện thoại/ghi chú. COD và miễn phí giao hàng.
 - Lịch sử và chi tiết đơn: `/orders`, `/orders/{id}`; khách chỉ xem đơn của chính mình.
-- Admin: `/admin/orders`, xem/lọc tất cả đơn và chuyển Chờ xác nhận → Đang giao → Hoàn thành. Chưa triển khai hủy đơn.
+- Admin: `/admin/orders`, xem/lọc tất cả đơn và chuyển Chờ xác nhận → Đang giao → Hoàn thành.
+- Hủy đơn: khách được hủy đơn của mình khi còn Chờ xác nhận; Admin được hủy đơn Chờ xác nhận hoặc Đang giao. Không hủy đơn Hoàn thành. Mỗi lần hủy khóa đơn và các sản phẩm trong transaction, hoàn đúng số lượng theo chi tiết đơn. Gửi lại yêu cầu hủy không hoàn kho thêm; lỗi giữa chừng sẽ rollback cả trạng thái và tồn kho.
 - Checkout tính tiền bằng số nguyên theo phần trăm đơn vị tiền từ giá DB; khóa tồn kho và ghi đơn/items trong transaction. Token duy nhất chống gửi lặp. Giá/tên được lưu tại thời điểm mua.
 
 Sau khi lấy code, chạy `php artisan migrate` để thêm cột `orders.checkout_token`; không cần xóa database hoặc chạy lại seed. Nếu cài mới, làm theo hướng dẫn bên dưới.

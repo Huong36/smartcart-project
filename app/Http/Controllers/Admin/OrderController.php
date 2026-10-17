@@ -47,4 +47,13 @@ class OrderController extends Controller
 
         return redirect()->route('admin.orders.show', $order)->with('success', 'Đã cập nhật trạng thái đơn hàng.');
     }
+
+    public function cancel(Request $request, Order $order): RedirectResponse
+    {
+        $cancelled = $order->cancel($request->user());
+
+        return redirect()->route('admin.orders.show', $order)->with('success', $cancelled
+            ? 'Đã hủy đơn hàng và hoàn lại số lượng sản phẩm vào kho.'
+            : 'Đơn hàng đã được hủy trước đó.');
+    }
 }
