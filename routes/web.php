@@ -13,6 +13,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::get('/summary', [CartController::class, 'summary'])->name('summary');
+    Route::get('/data', [CartController::class, 'data'])->name('data');
     Route::post('/add', [CartController::class, 'add'])->name('add');
     Route::patch('/update', [CartController::class, 'update'])->name('update');
     Route::delete('/remove', [CartController::class, 'remove'])->name('remove');

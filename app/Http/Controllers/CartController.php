@@ -10,84 +10,30 @@ use Illuminate\View\View;
 class CartController extends Controller
 {
     /**
-     * Display the shopping cart page with items, subtotals, and total.
+     * Display the shopping cart page with items, subtotals, and total, or JSON payload if requested.
      */
-    public function index(): View
+    public function index(Request $request): View|JsonResponse
     {
-        $cart = session()->get('cart', []);
-        $items = [];
-        $totalPrice = 0;
-        $totalQty = 0;
+        $cartData = $this->buildCartData();
 
-        if (! empty($cart)) {
-            $productIds = array_keys($cart);
-            $products = Product::with('category')->whereIn('id', $productIds)->get()->keyBy('id');
-
-            foreach ($cart as $productId => $qty) {
-                $qty = (int) $qty;
-                if ($qty <= 0) {
-                    continue;
-                }
-
-                $product = $products->get($productId);
-
-                if (! $product) {
-                    // Product no longer exists in database
-                    $items[] = [
-                        'product_id' => $productId,
-                        'product' => null,
-                        'name' => 'Sản phẩm không còn khả dụng (ID #'.$productId.')',
-                        'price' => 0,
-                        'price_formatted' => '0 ₫',
-                        'quantity' => $qty,
-                        'subtotal' => 0,
-                        'subtotal_formatted' => '0 ₫',
-                        'stock' => 0,
-                        'stock_warning' => 'Sản phẩm đã bị xóa khỏi hệ thống.',
-                        'is_available' => false,
-                    ];
-
-                    continue;
-                }
-
-                $unitPrice = (float) $product->price;
-                $subtotal = (int) round($unitPrice * $qty);
-                $isOutOfStock = $product->stock <= 0;
-                $stockWarning = null;
-
-                if ($isOutOfStock) {
-                    $stockWarning = 'Sản phẩm hiện đang hết hàng.';
-                } elseif ($qty > $product->stock) {
-                    $stockWarning = 'Số lượng vượt quá tồn kho hiện có (còn '.$product->stock.' sản phẩm).';
-                }
-
-                $items[] = [
-                    'product_id' => $product->id,
-                    'product' => $product,
-                    'name' => $product->name,
-                    'image_url' => $product->image_url,
-                    'category_name' => $product->category?->name,
-                    'price' => $unitPrice,
-                    'price_formatted' => number_format($unitPrice, 0, ',', '.').' ₫',
-                    'quantity' => $qty,
-                    'subtotal' => $subtotal,
-                    'subtotal_formatted' => number_format($subtotal, 0, ',', '.').' ₫',
-                    'stock' => (int) $product->stock,
-                    'stock_warning' => $stockWarning,
-                    'is_available' => (! $isOutOfStock && $qty <= $product->stock),
-                ];
-
-                $totalPrice += $subtotal;
-                $totalQty += $qty;
-            }
+        if ($request->expectsJson()) {
+            return response()->json(array_merge(['success' => true], $cartData));
         }
 
         return view('cart.index', [
-            'items' => $items,
-            'totalPrice' => $totalPrice,
-            'totalPriceFormatted' => number_format($totalPrice, 0, ',', '.').' ₫',
-            'totalQty' => $totalQty,
+            'items' => $cartData['items'],
+            'totalPrice' => $cartData['raw_total_price'],
+            'totalPriceFormatted' => $cartData['total_price'],
+            'totalQty' => $cartData['total_qty'],
         ]);
+    }
+
+    /**
+     * Return current cart payload as JSON for dynamic client synchronization.
+     */
+    public function data(): JsonResponse
+    {
+        return response()->json(array_merge(['success' => true], $this->buildCartData()));
     }
 
     /**
@@ -265,32 +211,108 @@ class CartController extends Controller
      */
     private function calculateCartTotals(array $cart): array
     {
-        $totalQty = 0;
+        $data = $this->buildCartData();
+
+        return [
+            'total_qty' => $data['total_qty'],
+            'total_price' => $data['raw_total_price'],
+        ];
+    }
+
+    /**
+     * Build the structured cart items and totals.
+     *
+     * @return array{
+     *     items: array<int, array<string, mixed>>,
+     *     total_price: string,
+     *     raw_total_price: int,
+     *     total_qty: int,
+     *     is_empty: bool
+     * }
+     */
+    private function buildCartData(): array
+    {
+        $cart = session()->get('cart', []);
+        $items = [];
         $totalPrice = 0;
+        $totalQty = 0;
 
-        if (empty($cart)) {
-            return ['total_qty' => 0, 'total_price' => 0];
-        }
+        if (! empty($cart)) {
+            $productIds = array_keys($cart);
+            $products = Product::with('category')->whereIn('id', $productIds)->get()->keyBy('id');
 
-        $products = Product::whereIn('id', array_keys($cart))->get()->keyBy('id');
+            foreach ($cart as $productId => $qty) {
+                $qty = (int) $qty;
+                if ($qty <= 0) {
+                    continue;
+                }
 
-        foreach ($cart as $id => $qty) {
-            $qty = (int) $qty;
-            if ($qty <= 0) {
-                continue;
-            }
+                $product = $products->get($productId);
 
-            $totalQty += $qty;
-            $product = $products->get($id);
+                if (! $product) {
+                    $items[] = [
+                        'product_id' => (int) $productId,
+                        'product' => null,
+                        'name' => 'Sản phẩm không còn khả dụng (ID #'.$productId.')',
+                        'image_url' => null,
+                        'category_name' => 'SmartCart',
+                        'price' => 0,
+                        'price_formatted' => '0 ₫',
+                        'quantity' => $qty,
+                        'subtotal' => 0,
+                        'subtotal_formatted' => '0 ₫',
+                        'stock' => 0,
+                        'stock_warning' => 'Sản phẩm đã bị xóa khỏi hệ thống.',
+                        'is_available' => false,
+                    ];
 
-            if ($product) {
-                $totalPrice += (int) round((float) $product->price * $qty);
+                    continue;
+                }
+
+                $unitPrice = (float) $product->price;
+                $subtotal = (int) round($unitPrice * $qty);
+                $isOutOfStock = $product->stock <= 0;
+                $stockWarning = null;
+
+                if ($isOutOfStock) {
+                    $stockWarning = 'Sản phẩm hiện đang hết hàng.';
+                } elseif ($qty > $product->stock) {
+                    $stockWarning = 'Số lượng vượt quá tồn kho hiện có (còn '.$product->stock.' sản phẩm).';
+                }
+
+                $items[] = [
+                    'product_id' => $product->id,
+                    'product' => [
+                        'id' => $product->id,
+                        'name' => $product->name,
+                        'image_url' => $product->image_url,
+                        'category_name' => $product->category?->name,
+                        'stock' => (int) $product->stock,
+                    ],
+                    'name' => $product->name,
+                    'image_url' => $product->image_url,
+                    'category_name' => $product->category?->name ?? 'SmartCart',
+                    'price' => $unitPrice,
+                    'price_formatted' => number_format($unitPrice, 0, ',', '.').' ₫',
+                    'quantity' => $qty,
+                    'subtotal' => $subtotal,
+                    'subtotal_formatted' => number_format($subtotal, 0, ',', '.').' ₫',
+                    'stock' => (int) $product->stock,
+                    'stock_warning' => $stockWarning,
+                    'is_available' => (! $isOutOfStock && $qty <= $product->stock),
+                ];
+
+                $totalPrice += $subtotal;
+                $totalQty += $qty;
             }
         }
 
         return [
+            'items' => $items,
+            'total_price' => number_format($totalPrice, 0, ',', '.').' ₫',
+            'raw_total_price' => $totalPrice,
             'total_qty' => $totalQty,
-            'total_price' => $totalPrice,
+            'is_empty' => empty($items),
         ];
     }
 }
