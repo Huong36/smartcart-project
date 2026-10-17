@@ -134,7 +134,7 @@ class ProductSeeder extends Seeder
             foreach ($catData['products'] as [$name, $price, $stock, $description]) {
                 $imagePath = 'products/'.Str::slug($name).'.png';
 
-                Product::firstOrCreate(
+                $product = Product::firstOrCreate(
                     [
                         'category_id' => $category->id,
                         'name' => $name,
@@ -146,6 +146,10 @@ class ProductSeeder extends Seeder
                         'image' => $imagePath,
                     ]
                 );
+
+                if (($product->image === null || $product->image === '') && Storage::disk('public')->exists($imagePath)) {
+                    $product->update(['image' => $imagePath]);
+                }
             }
         }
     }
