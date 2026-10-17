@@ -64,15 +64,24 @@ class AdminProductTest extends TestCase
         $admin = $this->adminUser();
         $category = Category::factory()->create();
 
-        // Name missing, price <= 0, stock <= 0
+        // Name missing, price <= 0, stock < 0
         $response = $this->actingAs($admin)->post(route('admin.products.store'), [
             'name' => '',
             'category_id' => $category->id,
             'price' => 0,
-            'stock' => 0,
+            'stock' => -1,
         ]);
 
         $response->assertSessionHasErrors(['name', 'price', 'stock']);
+
+        // Stock non-integer is rejected
+        $responseDecimal = $this->actingAs($admin)->post(route('admin.products.store'), [
+            'name' => 'Sản phẩm số lượng lẻ',
+            'category_id' => $category->id,
+            'price' => 100000,
+            'stock' => 2.5,
+        ]);
+        $responseDecimal->assertSessionHasErrors(['stock']);
 
         // Invalid image file format (txt pretending to be image)
         $fakeFile = UploadedFile::fake()->create('document.pdf', 100);
@@ -199,5 +208,66 @@ class AdminProductTest extends TestCase
         $response->assertSessionHas('success');
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
         Storage::disk('public')->assertMissing($imagePath);
+    }
+
+    public function test_admin_can_create_product_with_zero_stock(): void
+    {
+        $admin = $this->adminUser();
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($admin)->post(route('admin.products.store'), [
+            'name' => 'Sản phẩm hết hàng ban đầu',
+            'category_id' => $category->id,
+            'price' => 120000,
+            'stock' => 0,
+            'description' => 'Mô tả sản phẩm stock 0',
+        ]);
+
+        $response->assertRedirect(route('admin.products.index'));
+        $this->assertDatabaseHas('products', [
+            'name' => 'Sản phẩm hết hàng ban đầu',
+            'category_id' => $category->id,
+            'stock' => 0,
+        ]);
+    }
+
+    public function test_admin_can_update_product_with_zero_stock(): void
+    {
+        $admin = $this->adminUser();
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'category_id' => $category->id,
+            'name' => 'Sản phẩm có sẵn',
+            'stock' => 20,
+            'price' => 250000,
+        ]);
+
+        $response = $this->actingAs($admin)->put(route('admin.products.update', $product), [
+            'name' => 'Sản phẩm cập nhật hết hàng',
+            'category_id' => $category->id,
+            'price' => 250000,
+            'stock' => 0,
+            'description' => 'Đã bán hết kho',
+        ]);
+
+        $response->assertRedirect(route('admin.products.index'));
+        $this->assertSame(0, $product->fresh()->stock);
+        $this->assertSame('Sản phẩm cập nhật hết hàng', $product->fresh()->name);
+    }
+
+    public function test_product_with_quotes_in_name_renders_safe_delete_form(): void
+    {
+        $admin = $this->adminUser();
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'category_id' => $category->id,
+            'name' => "Sách O'Reilly \"Special Edition\"",
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.products.index'));
+
+        $response->assertOk();
+        $response->assertDontSee('onsubmit="return confirm', false);
+        $response->assertSee('class="delete-confirm-form"', false);
     }
 }

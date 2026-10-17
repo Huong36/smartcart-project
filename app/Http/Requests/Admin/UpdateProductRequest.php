@@ -29,7 +29,7 @@ class UpdateProductRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'price' => ['required', 'numeric', 'gt:0'],
-            'stock' => ['required', 'integer', 'gt:0'],
+            'stock' => ['required', 'integer', 'min:0'],
             'image' => ['nullable', 'file', 'image', 'mimes:jpeg,png,webp', 'max:5120'],
             'description' => ['nullable', 'string', 'max:5000'],
         ];
@@ -50,7 +50,7 @@ class UpdateProductRequest extends FormRequest
             'price.gt' => 'Giá sản phẩm phải lớn hơn 0.',
             'stock.required' => 'Số lượng sản phẩm không được để trống.',
             'stock.integer' => 'Số lượng sản phẩm phải là số nguyên.',
-            'stock.gt' => 'Số lượng sản phẩm phải lớn hơn 0.',
+            'stock.min' => 'Số lượng sản phẩm phải lớn hơn hoặc bằng 0.',
             'image.image' => 'Tệp tải lên phải là một hình ảnh.',
             'image.mimes' => 'Ảnh sản phẩm phải có định dạng: jpeg, png hoặc webp.',
             'image.max' => 'Dung lượng ảnh tối đa là 5MB.',

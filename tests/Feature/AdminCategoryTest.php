@@ -124,4 +124,18 @@ class AdminCategoryTest extends TestCase
         $response->assertSessionHas('success');
         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
     }
+
+    public function test_category_with_quotes_in_name_renders_safe_delete_form(): void
+    {
+        $admin = $this->adminUser();
+        $category = Category::factory()->create([
+            'name' => "Sách & Tạp chí O'Reilly \"Tech\"",
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.categories.index'));
+
+        $response->assertOk();
+        $response->assertDontSee('onsubmit="return confirm', false);
+        $response->assertSee('class="delete-confirm-form"', false);
+    }
 }

@@ -19,12 +19,26 @@ class DatabaseFoundationTest extends TestCase
         $admin = User::where('email', 'admin@gmail.com')->firstOrFail();
         $admin->update(['password' => 'changed-password']);
         $hash = $admin->fresh()->password;
+
+        $product = Product::firstOrFail();
+        $product->update([
+            'stock' => 0,
+            'price' => 999999,
+            'image' => 'products/custom-edited.png',
+        ]);
+
         $this->seed();
         $this->assertDatabaseCount('users', 2);
-        $this->assertDatabaseCount('categories', 5);
-        $this->assertDatabaseCount('products', 30);
+        $this->assertDatabaseCount('categories', 8);
+        $this->assertDatabaseCount('products', 60);
         $this->assertTrue($admin->isAdmin());
         $this->assertSame($hash, $admin->fresh()->password);
+
+        $freshProduct = $product->fresh();
+        $this->assertSame(0, $freshProduct->stock);
+        $this->assertSame('999999.00', $freshProduct->price);
+        $this->assertSame('products/custom-edited.png', $freshProduct->image);
+
         $this->get('/')->assertOk()->assertSee('Sản phẩm mới');
     }
 

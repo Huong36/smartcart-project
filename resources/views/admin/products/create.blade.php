@@ -79,7 +79,7 @@
                     <div class="mb-3">
                         <label for="stock" class="form-label fw-semibold">Số lượng trong kho <span class="text-danger">*</span></label>
                         <input type="number"
-                               min="1"
+                               min="0"
                                step="1"
                                class="form-control @error('stock') is-invalid @enderror"
                                id="stock"
@@ -87,7 +87,7 @@
                                value="{{ old('stock', 20) }}"
                                placeholder="Ví dụ: 20"
                                required>
-                        <div class="form-text">Số lượng sản phẩm ban đầu phải lớn hơn 0.</div>
+                        <div class="form-text">Số lượng sản phẩm ban đầu phải lớn hơn hoặc bằng 0.</div>
                         @error('stock')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

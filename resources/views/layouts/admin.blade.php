@@ -227,7 +227,7 @@
                     {{ strtoupper(mb_substr(auth()->user()->name ?? 'A', 0, 1)) }}
                 </div>
                 <div class="d-none d-md-block text-start lh-sm me-1">
-                    <div class="fw-semibold small text-truncate" style="max-width: 140px;">{{ auth()->user()->name }}</div>
+                    <div class="fw-semibold small text-truncate" style="max-width: 140px;">{{ auth()->user()?->name ?? 'Quản trị viên' }}</div>
                     <span class="text-secondary" style="font-size: 0.72rem;">Quản trị viên</span>
                 </div>
             </div>
@@ -349,6 +349,23 @@
             if (toggle) toggle.addEventListener('click', toggleSidebar);
             if (backdrop) backdrop.addEventListener('click', closeSidebar);
             if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+
+            // Safe delete confirmation handler using event listener (handles names with quotes safely)
+            document.addEventListener('submit', function (event) {
+                const form = event.target.closest('.delete-confirm-form');
+                if (!form) {
+                    return;
+                }
+
+                const name = form.dataset.name || '';
+                const type = form.dataset.type || 'mục';
+                const message = `Bạn có chắc chắn muốn xóa ${type} "${name}"?`;
+
+                if (!window.confirm(message)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            });
         });
     </script>
     @stack('scripts')
