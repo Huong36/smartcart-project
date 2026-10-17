@@ -16,7 +16,11 @@ class LoginRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge(['email' => mb_strtolower(trim((string) $this->input('email')))]);
+        $email = $this->input('email');
+
+        if (is_string($email)) {
+            $this->merge(['email' => mb_strtolower(trim($email))]);
+        }
     }
 
     public function rules(): array
@@ -32,6 +36,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email.required' => 'Vui lòng nhập email.',
+            'email.string' => 'Email phải là một chuỗi văn bản.',
             'email.email' => 'Email không đúng định dạng.',
             'password.required' => 'Vui lòng nhập mật khẩu.',
         ];

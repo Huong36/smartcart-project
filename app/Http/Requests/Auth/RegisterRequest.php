@@ -14,7 +14,11 @@ class RegisterRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge(['email' => mb_strtolower(trim((string) $this->input('email')))]);
+        $email = $this->input('email');
+
+        if (is_string($email)) {
+            $this->merge(['email' => mb_strtolower(trim($email))]);
+        }
     }
 
     public function rules(): array
@@ -34,6 +38,7 @@ class RegisterRequest extends FormRequest
             'name.required' => 'Vui lòng nhập họ tên.',
             'name.max' => 'Họ tên không quá 255 ký tự.',
             'email.required' => 'Vui lòng nhập email.',
+            'email.string' => 'Email phải là một chuỗi văn bản.',
             'email.email' => 'Email không đúng định dạng.',
             'email.unique' => 'Email này đã được đăng ký.',
             'email.max' => 'Email không quá 255 ký tự.',

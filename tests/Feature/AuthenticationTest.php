@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -22,7 +23,7 @@ class AuthenticationTest extends TestCase
     public function test_registration_normalizes_email_hashes_password_and_ignores_injected_role(): void
     {
         $this->post('/register', [
-            'name' => 'Khách mới', 'email' => 'NEW@EXAMPLE.COM',
+            'name' => 'Khách mới', 'email' => '  NEW@EXAMPLE.COM  ',
             'password' => 'password123', 'password_confirmation' => 'password123',
             'phone' => '0901234567', 'role' => 'admin',
         ])->assertRedirect('/account');
@@ -48,7 +49,7 @@ class AuthenticationTest extends TestCase
     public function test_customer_login_redirects_to_account_and_cannot_access_admin(): void
     {
         $user = User::factory()->create();
-        $this->post('/login', ['email' => $user->email, 'password' => 'password'])->assertRedirect('/account');
+        $this->post('/login', ['email' => '  '.strtoupper($user->email).'  ', 'password' => 'password'])->assertRedirect('/account');
         $this->assertAuthenticatedAs($user);
         $this->get('/admin')->assertForbidden()->assertSee('Bạn không có quyền');
         $this->get('/account')->assertOk()->assertSee($user->email);
@@ -92,5 +93,41 @@ class AuthenticationTest extends TestCase
         $this->actingAs(User::factory()->create())->get('/login')->assertRedirect('/account');
         $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $this->actingAs($admin)->get('/register')->assertRedirect('/admin');
+    }
+
+    #[DataProvider('invalidEmailValues')]
+    public function test_login_rejects_non_string_email_with_validation_error(mixed $email): void
+    {
+        $this->postJson('/login', ['email' => $email, 'password' => 'password123'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('email');
+
+        $this->assertGuest();
+    }
+
+    #[DataProvider('invalidEmailValues')]
+    public function test_registration_rejects_non_string_email_without_creating_user(mixed $email): void
+    {
+        $this->postJson('/register', [
+            'name' => 'Khách mới',
+            'email' => $email,
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ])->assertUnprocessable()->assertJsonValidationErrors('email');
+
+        $this->assertGuest();
+        $this->assertDatabaseCount('users', 0);
+    }
+
+    /** @return array<string, array{mixed}> */
+    public static function invalidEmailValues(): array
+    {
+        return [
+            'array' => [['user@example.com']],
+            'empty array' => [[]],
+            'integer' => [123],
+            'boolean' => [true],
+            'null' => [null],
+        ];
     }
 }
