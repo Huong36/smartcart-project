@@ -59,7 +59,7 @@ Chỉ được tạo ở APP_ENV=local hoặc testing, phục vụ demo trên m�
 | Admin | admin@gmail.com | 12345678 |
 | Customer | user@gmail.com | 12345678 |
 
-Đăng ký mới luôn tạo Customer. Admin đăng nhập được chuyển đến `/admin`, Customer đến `/account`; Customer truy cập `/admin` nhận 403. Seeder cũng tạo 5 danh mục và 30 sản phẩm, dùng ảnh placeholder chung để chạy ngay. Chạy lại `php artisan db:seed` không tạo trùng và không reset mật khẩu tài khoản đã có.
+Đăng ký mới luôn tạo Customer. Admin đăng nhập được chuyển đến `/admin`, Customer đến `/account`; Customer truy cập `/admin` nhận 403. Seeder tạo sẵn 8 danh mục và 60 sản phẩm, tự động sao chép 60 ảnh mẫu từ kho lưu trữ Git vào disk public (`storage/app/public/products`). Chạy lại `php artisan db:seed` chỉ bổ sung dữ liệu chưa có, không tạo trùng, không ghi đè giá, tồn kho hoặc ảnh đã chỉnh sửa và không reset mật khẩu tài khoản đã có. Khi có nhu cầu đặt lại dữ liệu demo mẫu về ban đầu, chạy riêng lệnh có chủ đích: `php artisan db:seed --class=DemoResetSeeder`.
 
 Không dùng tài khoản demo ở môi trường công khai. `.env`, APP_KEY, vendor, log, database local và ảnh upload không được commit. Khi triển khai thật, dùng APP_ENV=production, APP_DEBUG=false, HTTPS và thông tin DB/tài khoản riêng.
 
