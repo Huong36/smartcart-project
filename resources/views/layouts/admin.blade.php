@@ -280,6 +280,8 @@
                 </li>
             </ul>
 
+            <div class="admin-nav-heading">Đơn hàng</div>
+            <ul class="admin-nav"><li class="admin-nav-item"><a href="{{ route('admin.orders.index') }}" class="admin-nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}"><span>Quản lý đơn hàng</span></a></li></ul>
             <div class="admin-nav-heading mt-auto">Hệ thống</div>
             <ul class="admin-nav pb-3">
                 <li class="admin-nav-item">

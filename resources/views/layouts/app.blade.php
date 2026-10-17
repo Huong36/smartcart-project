@@ -12,7 +12,7 @@
 <body>
 <a class="visually-hidden-focusable p-3" href="#main-content">Đến nội dung chính</a>
 <header class="border-bottom bg-white">
-    <nav class="navbar navbar-expand-md container py-3" aria-label="Điều hướng chính">
+    <nav class="navbar navbar-expand-xl container py-3" aria-label="Điều hướng chính">
         <a class="navbar-brand brand" href="{{ route('home') }}"><span class="brand-mark">S</span> SmartCart<span class="brand-dot">.</span></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Mở menu"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="main-nav">
@@ -46,6 +46,7 @@
                 </a>
 
                 @auth
+                    <a class="nav-link" href="{{ route('orders.index') }}">Đơn hàng của tôi</a>
                     @if(auth()->user()->isAdmin())
                         <a class="nav-link" href="{{ route('admin.dashboard') }}">Quản trị</a>
                     @endif

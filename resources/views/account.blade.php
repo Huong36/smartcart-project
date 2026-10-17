@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Tài khoản của tôi')
 @section('content')
+<a href="{{ route('orders.index') }}" class="btn btn-primary mb-4">Xem lịch sử đơn hàng</a>
 <p class="eyebrow">TÀI KHOẢN CỦA TÔI</p>
 <h1 class="h2 fw-bold mb-4">Xin chào, {{ auth()->user()->name }}</h1>
 <div class="form-panel"><dl class="row mb-0">

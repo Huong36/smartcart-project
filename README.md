@@ -2,7 +2,20 @@
 
 Bộ khung website bán hàng cho bài tập lớn môn Mã Nguồn Mở, nhóm 4 thành viên. Laravel 13 + MySQL + Eloquent + Blade + Bootstrap 5.
 
-Đã có: CSDL 5 bảng nghiệp vụ, model/quan hệ, seeder, đăng ký/đăng nhập/đăng xuất, phân quyền Admin–Customer, trang tài khoản, trang chủ mẫu và tổng quan Admin. CRUD, giỏ hàng, checkout, tìm kiếm/phân trang và API ngoài sẽ được các thành viên 2–4 triển khai tiếp. Đây chưa phải sản phẩm hoàn chỉnh để nộp bài.
+Nhánh `feat/client-orders` phát triển từ `integration/admin-cart`: có CSDL, Auth/role, CRUD Admin, giỏ hàng Fetch, live search và widget thời tiết; bổ sung danh sách sản phẩm phân trang/lọc/sắp xếp, chi tiết sản phẩm, checkout COD, lịch sử đơn của khách và quản lý trạng thái đơn cho Admin. Báo cáo và nghiệm thu cuối cần được nhóm hoàn thiện trước khi nộp.
+
+## Client Module
+
+- Trang chủ: 8 sản phẩm/trang, tìm tên, lọc danh mục, giá tăng/giảm; giữ bộ lọc khi chuyển trang.
+- Chi tiết sản phẩm: `/products/{id}`, ảnh, mô tả, tồn kho và thêm giỏ bằng Fetch.
+- Thanh toán: `/checkout`, yêu cầu đăng nhập, nhập địa chỉ/điện thoại/ghi chú. COD và miễn phí giao hàng.
+- Lịch sử và chi tiết đơn: `/orders`, `/orders/{id}`; khách chỉ xem đơn của chính mình.
+- Admin: `/admin/orders`, xem/lọc tất cả đơn và chuyển Chờ xác nhận → Đang giao → Hoàn thành. Chưa triển khai hủy đơn.
+- Checkout tính tiền bằng số nguyên theo phần trăm đơn vị tiền từ giá DB; khóa tồn kho và ghi đơn/items trong transaction. Token duy nhất chống gửi lặp. Giá/tên được lưu tại thời điểm mua.
+
+Sau khi lấy code, chạy `php artisan migrate` để thêm cột `orders.checkout_token`; không cần xóa database hoặc chạy lại seed. Nếu cài mới, làm theo hướng dẫn bên dưới.
+
+Kiểm tra riêng module: `php artisan test --compact tests/Feature/ClientOrdersTest.php`. Bộ test bao gồm phân trang/bộ lọc, phân quyền, validation, snapshot giá, tồn kho, gửi lặp và rollback khi lưu lỗi. SQLite không kiểm chứng khóa cạnh tranh MySQL; nhóm cần thử thêm hai giao dịch đồng thời trên MySQL trước khi triển khai công khai.
 
 ## Cài đặt trên máy thành viên
 

@@ -618,7 +618,7 @@
                 confirmButtonColor: '#08796a',
                 confirmButtonText: 'Xem đơn hàng của tôi'
             }).then(() => {
-                window.location.href = '/account';
+                window.location.href = '/orders/' + encodeURIComponent(orderId);
             });
         } else {
             alert('Đặt hàng thành công! Mã đơn: #' + orderId);

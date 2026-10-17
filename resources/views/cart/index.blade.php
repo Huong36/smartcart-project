@@ -2,6 +2,7 @@
 @section('title', 'Giỏ hàng của bạn')
 
 @section('content')
+@if($errors->any())<div class="alert alert-danger" role="alert">{{ $errors->first() }}</div>@endif
 <div class="cart-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -125,13 +126,13 @@
                     <span class="fw-bold fs-4 price" id="cart-summary-final">{{ $totalPriceFormatted }}</span>
                 </div>
                 <p class="small text-muted mb-3">
-                    * Giá sản phẩm đã bao gồm thuế. Phí vận chuyển sẽ được tính ở bước thanh toán.
+                    Giá sản phẩm đã bao gồm thuế. Miễn phí giao hàng, thanh toán khi nhận hàng.
                 </p>
                 <div class="d-grid gap-2">
                     {{-- Điểm tích hợp cho Thành viên 3 (Checkout) --}}
-                    <button type="button" class="btn btn-primary py-3 fw-bold" id="btn-checkout" onclick="alert('Module Thanh toán (Checkout) do Thành viên 3 phụ trách đang được tích hợp. Cảm ơn bạn!')">
+                    <a href="{{ route('checkout.show') }}" class="btn btn-primary py-3 fw-bold" id="btn-checkout">
                         Tiến hành thanh toán →
-                    </button>
+                    </a>
                     <a href="{{ route('home') }}" class="btn btn-outline-secondary py-2">
                         Tiếp tục mua hàng
                     </a>
