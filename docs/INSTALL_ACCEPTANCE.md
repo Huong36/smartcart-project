@@ -1,6 +1,6 @@
 # Cài đặt và xác nhận trên máy thành viên
 
-Ngày chuẩn bị: 18/10/2026. Bản mã nghiệp vụ cần kiểm tra: `316a2ac` trên nhánh `integration/admin-cart`. Nhánh `main` chưa phải bản nghiệm thu đầy đủ.
+Ngày chuẩn bị: 18/10/2026. Bản mã demo cần kiểm tra: tag `demo-2026-10-18` (mã chức năng `afe7a0b`) trên nhánh `integration/admin-cart`. Nhánh `main` chưa phải bản nghiệm thu đầy đủ.
 
 ## Kết quả đã kiểm tra
 
@@ -30,7 +30,7 @@ Chọn một thư mục mới chưa có dự án:
 git clone --branch integration/admin-cart https://github.com/Huong36/smartcart-project.git smartcart-check
 cd smartcart-check
 git rev-parse --short HEAD
-git merge-base --is-ancestor 316a2ac HEAD
+git merge-base --is-ancestor afe7a0b HEAD
 composer install --no-interaction --prefer-dist
 composer check-platform-reqs
 Copy-Item .env.example .env
@@ -61,6 +61,21 @@ Storage link phải trỏ vào storage/app/public của bản clone này. Nếu 
 
 Bộ test mặc định dùng SQLite in-memory; không chạy RefreshDatabase hoặc migrate:fresh trên database đang demo. Không cần npm/build vì ứng dụng dùng CSS/JS cục bộ trong public.
 
+## 3b Khởi động tìm sản phẩm bằng ảnh
+
+Cần Python 3.12. Ở terminal thứ hai, từ gốc dự án:
+
+```powershell
+py -3.12 -m venv .venv-visual-search
+.\.venv-visual-search\Scripts\python.exe -m pip install torch==2.14.1 torchvision==0.29.1 --index-url https://download.pytorch.org/whl/cpu
+.\.venv-visual-search\Scripts\python.exe -m pip install -r app/Services/visual-search-requirements.txt
+.\.venv-visual-search\Scripts\python.exe app/Services/visual_search.py
+```
+
+Lần đầu cần Internet để tải mô hình, sau đó đợi dòng `Listening on http://127.0.0.1:8020`. Giữ cả server Laravel và dịch vụ Python chạy. Tải và thử mô hình từ trước buổi báo cáo, không cài ngay khi thuyết trình. Trọng số đã lưu sẽ dùng lại khi khởi động; token tự tạo riêng cho bản cài này. Chi tiết mô hình, revision và giấy phép trong README.
+
+Bộ test PHP hiện có 88 bài, 676 assertions đã đạt trên SQLite. Kết quả MySQL 79 bài ở mục lịch sử phía trên thuộc bản nghiệp vụ cũ, không phải kết quả của toàn bộ bản demo mới.
+
 ## 4 Kiểm tra trong trình duyệt
 
 Mở `http://127.0.0.1:8000` trên chính máy vừa cài. 127.0.0.1 của mỗi máy là máy đó, không phải máy trưởng nhóm.
@@ -72,6 +87,7 @@ Mở `http://127.0.0.1:8000` trên chính máy vừa cài. 127.0.0.1 của mỗi
 - Admin chuyển một đơn qua Đang giao rồi Hoàn thành; đơn hoàn thành không có nút hủy.
 - Tạo đơn khác để hủy; Admin được hủy pending/processing, khách chỉ hủy đơn của mình ở pending. Tồn kho được hoàn đúng một lần.
 - Khách đăng nhập lại thấy trạng thái mới. Customer vào `/admin` phải bị chặn.
+- Bấm nút tìm bằng ảnh, chọn ảnh thật tai nghe/bàn phím và kiểm tra kết quả, mở sản phẩm, thêm giỏ. Thử ảnh không liên quan và tệp sai định dạng. Với camera, cần HTTPS/localhost và quyền sử dụng thiết bị; ghi riêng thiết bị đã thử.
 - Thử điện thoại hoặc DevTools ở 375 px, 768 px và desktop. Bảng rộng được cuộn trong khung; trang không tràn ngang.
 
 ## 5 Gửi kết quả cho trưởng nhóm
@@ -85,6 +101,9 @@ PHP / Composer / MySQL:
 composer install và check-platform-reqs: Đạt / Lỗi
 migrate --seed, seed lần hai, storage link: Đạt / Lỗi
 Ảnh sản phẩm: Đạt / Lỗi
+Python / OpenCLIP / mô hình khởi động: Đạt / Lỗi
+Tìm bằng ảnh / thêm giỏ / ảnh không khớp: Đạt / Lỗi
+Camera thật, thiết bị và trình duyệt đã thử:
 Test: số bài đạt / tổng số, assertions
 Luồng đặt hàng / hoàn thành / hủy / hoàn kho: Đạt / Lỗi
 Màn hình đã thử:

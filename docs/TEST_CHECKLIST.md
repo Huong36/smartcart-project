@@ -73,3 +73,26 @@ Mã nghiệp vụ 316a2ac = ae4649a + sửa header mobile Admin. Kiểm tra tron
 - Ảnh bằng chứng: docs/demo; chi tiết trong docs/report/Bao_Cao_Nghiem_Thu.md.
 - Máy vật lý thứ hai: CHỜ thành viên thực hiện INSTALL_ACCEPTANCE.md và gửi biên bản. Chưa gộp main.
 - Các mục chỉ đạt một phần hoặc chưa chạy giữ đúng trạng thái trong bảng, không quy đổi thành Pass toàn bộ.
+
+
+## Bổ sung cho bản demo có tìm ảnh ngày 18/10/2026
+
+Mã chức năng `afe7a0b`, được đóng gói trên nhánh `integration/admin-cart`, tag `demo-2026-10-18`. Các kết quả 79 test phía trên là lịch sử bản nghiệp vụ trước.
+
+| Hạng mục | Kết quả thực tế |
+|---|---|
+| Kiểm thử PHP bản có tìm ảnh | 88/88 đạt, 676 assertions trên SQLite |
+| Đồng bộ ảnh mẫu | Đạt kiểm thử giữ file đã tồn tại, giữ ảnh tùy chỉnh và nâng đường dẫn PNG mẫu sang JPG; không xóa file cũ |
+| Upload ảnh và tìm bằng mô hình thật | Đạt trên trình duyệt; tìm tai nghe từ ảnh đã đổi sáng và xoay |
+| Thêm kết quả vào giỏ | Đạt; tai nghe 1 × 490000 đồng |
+| Ảnh sai định dạng, quá dung lượng và kích thước | Đạt các ca kiểm thử server; trình duyệt chặn tệp Markdown |
+| Ảnh không liên quan | Một ảnh chụp màn hình trả rỗng; không coi đây là đánh giá mọi ảnh ngoài catalog |
+| Dịch vụ Python tắt | Đạt; thông báo tiếng Việt, thử lại được khi dịch vụ khởi động |
+| Thay nội dung ảnh, xóa sản phẩm khỏi tập tìm | Đạt trên dịch vụ thật; ảnh cũ không còn khớp, ảnh thay mới được cập nhật |
+| Truy cập file ngoài public storage / không có token | Bị chặn; dịch vụ không đọc ảnh ngoài vùng cho phép, yêu cầu không token trả 401 |
+| Bố cục tìm ảnh và header 375 px | Không tràn ngang; nút tìm ảnh mở đúng trang, live search vẫn trả gợi ý |
+| Ví dụ người dùng tự thử | Ảnh tai nghe, bàn phím và hạt điều trả đúng loại theo ảnh chụp màn hình đã cung cấp |
+| Camera trên máy vật lý thứ hai | Chưa xác nhận |
+| Tập ảnh chụp độc lập đủ lớn và nhiều mẫu cùng loại | Chưa có; chưa kết luận độ chính xác/độ đa dạng |
+| Bộ 88 test trên MySQL của bản demo mới | Chưa chạy; kết quả MySQL 79/79 cũ không thay thế mục này |
+| Cài và chạy trên máy thứ hai | Chờ thành viên; người dùng xác nhận chưa thử ngày 18/10 |

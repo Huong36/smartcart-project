@@ -4,7 +4,7 @@ Thời lượng đề xuất: 12 phút trình bày/demo và 3 phút hỏi đáp.
 
 ## Chuẩn bị trước buổi báo cáo
 
-- Dùng nhánh integration/admin-cart có commit 316a2ac hoặc bản nghiệm thu mới hơn; sau khi được gộp mới đổi sang main.
+- Dùng nhánh integration/admin-cart có tag demo-2026-10-18; sau khi được gộp mới đổi sang main.
 - Cài và kiểm tra từ hôm trước theo INSTALL_ACCEPTANCE.md; mở MySQL và server trước giờ báo cáo. Không cài thư viện hoặc migrate:fresh ngay trong buổi thuyết trình.
 - Có một cửa sổ trình duyệt thường cho Customer và một cửa sổ riêng tư cho Admin để hai session không đổi đăng nhập của nhau. Hai tab cùng hồ sơ thường chia sẻ session.
 - Tạo danh mục và sản phẩm demo dễ tìm, ví dụ “Demo nghiệm thu”, giá 100.000 đồng, tồn kho 10, có ảnh. Chuẩn bị tệp PNG/JPEG hợp lệ để upload.
@@ -61,7 +61,7 @@ Không đọc cứng ID đơn trong lời dẫn; dùng ID vừa được tạo. 
 | Vì sao Customer không xem đơn người khác? | Truy vấn thông qua quan hệ orders của user hiện tại; ID không thuộc user trả 404 |
 | Đổi tên/giá sản phẩm thì đơn cũ thế nào? | order_items giữ snapshot product_name và price |
 | Vì sao không cascade xóa danh mục? | Bảo vệ sản phẩm và lịch sử; báo lỗi rõ khi còn dữ liệu liên quan |
-| Bao nhiêu test? | Bộ hiện có 79 test, 636 assertions trên SQLite/MySQL; không đồng nghĩa mọi ca UI đã tự động hóa |
+| Bao nhiêu test? | Bản demo mới có 88 test, 676 assertions đạt trên SQLite; bản nghiệp vụ trước có 79 test đạt trên MySQL. Không đồng nghĩa mọi ca UI đã tự động hóa |
 | Cài được máy khác chưa? | Trả lời theo biên bản thực tế; hiện đã cài sạch cùng máy, máy thứ hai đang chờ xác nhận |
 
 ## Kết thúc và xử lý sự cố
@@ -69,3 +69,18 @@ Không đọc cứng ID đơn trong lời dẫn; dùng ID vừa được tạo. 
 Lời kết gợi ý: “Nhóm đã tích hợp các module, kiểm tra backend và luồng đặt hàng/hoàn thành/hủy trên trình duyệt. Các hạn chế hiện tại là chưa có thanh toán trực tuyến, chưa triển khai kinh doanh thật và còn các bước nghiệm thu được ghi riêng. Nhóm phân công theo module và lưu lịch sử đóng góp trên GitHub.”
 
 Nếu mất mạng, bỏ qua widget và tiếp tục CRUD/cart/order chạy local; nếu server dừng, bật lại server trên đúng thư mục và cổng. Nếu gặp lỗi không xử lý nhanh được, chỉ rõ lỗi, mở ảnh đã chuẩn bị và mô tả kết quả đã kiểm chứng. Không che lỗi hoặc nói ảnh là demo trực tiếp.
+
+
+## Đoạn demo tìm bằng ảnh khoảng 90 giây
+
+Thành viên 1 trình bày sau phần tìm kiếm của thành viên 4; rút gọn thao tác CRUD để giữ tổng thời gian theo quy định của giảng viên.
+
+1. Mở dịch vụ Python và Laravel trước buổi báo cáo; thử ảnh trước để xây cache.
+2. Bấm nút cam “Tìm bằng ảnh”, chọn ảnh chụp tai nghe hoặc bàn phím khác ảnh catalog. Nếu dùng camera, kiểm tra quyền và thiết bị trước giờ trình bày.
+3. Bấm tìm, chỉ ra sản phẩm phù hợp và thêm vào giỏ; tiếp tục luồng checkout đã có.
+4. Nói rõ: “Nhóm dùng mô hình OpenCLIP đã huấn luyện sẵn, mã hóa ảnh thành vector rồi so sánh cosine với ảnh sản phẩm. Nhóm xây phần kết nối Laravel, đồng bộ chỉ mục khi ảnh thay đổi, lọc kết quả và giao diện chụp/chọn ảnh.”
+5. Nếu được hỏi tại sao chỉ có 1–2 kết quả: catalog hiện 60 sản phẩm, ít mẫu cùng loại; hệ thống còn lọc theo ngưỡng và khoảng cách với điểm tốt nhất. Không ép hiện sản phẩm lạc loại và không coi số lượng kết quả là độ chính xác.
+
+Cần nắm: điểm cosine không phải phần trăm xác suất; ngưỡng 0.45 và khoảng điểm 0.12 là tham số thử nghiệm. Không nói nhóm tự huấn luyện mô hình hoặc đã đạt một tỷ lệ nhận diện chưa đo. Ghi rõ nguồn OpenCLIP, model LAION và giấy phép trong báo cáo.
+
+Nếu dịch vụ chưa sẵn sàng, kiểm tra terminal Python; thông báo trên giao diện không làm hỏng giỏ hàng. Có ảnh chụp dự phòng trong docs/demo, phải nói rõ đó là bằng chứng chạy trước.

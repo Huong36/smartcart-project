@@ -1,8 +1,17 @@
 # SmartCart
 
-Bộ khung website bán hàng cho bài tập lớn môn Mã Nguồn Mở, nhóm 4 thành viên. Laravel 13 + MySQL + Eloquent + Blade + Bootstrap 5.
+Website bán hàng và giỏ hàng tương tác cho bài tập lớn môn Mã Nguồn Mở, nhóm 4 thành viên. Laravel 13 + MySQL + Eloquent + Blade + Bootstrap 5.
 
 Nhánh `integration/admin-cart` đã ghép module `feat/client-orders`: có CSDL, Auth/role, CRUD Admin, giỏ hàng Fetch, live search và widget thời tiết; bổ sung danh sách sản phẩm phân trang/lọc/sắp xếp, chi tiết sản phẩm, checkout COD, lịch sử đơn của khách và quản lý trạng thái đơn cho Admin. Báo cáo và nghiệm thu cuối cần được nhóm hoàn thiện trước khi nộp.
+
+
+## Bản demo đóng gói ngày 18/10/2026
+
+Bản demo đầy đủ nằm trên **`integration/admin-cart`**, có tag **`demo-2026-10-18`** để cả nhóm lấy cùng một phiên bản. Nhánh `main` chưa được cập nhật bản nghiệm thu cuối. Bản demo gồm các module mua hàng, ảnh sản phẩm thật, giao diện cam nhạt và tìm sản phẩm bằng ảnh OpenCLIP. Hướng dẫn bên dưới chạy được từ mã nguồn hoặc ZIP; ZIP không chứa `.env`, vendor, database, ảnh truy vấn, token hoặc trọng số mô hình.
+
+Kiểm tra gần nhất trên bản mã `afe7a0b`: **88/88 test, 676 assertions trên SQLite**, Composer validate và kiểm tra phụ thuộc Python đạt. Bộ 79 test MySQL đã đạt ở bản nghiệp vụ trước đó; chưa chạy lại toàn bộ 88 test bằng MySQL cho bản demo này. Thành viên xác nhận ngày 18/10 rằng **máy thứ hai chưa thử**, đang chờ thực hiện theo [hướng dẫn cài đặt](docs/INSTALL_ACCEPTANCE.md).
+
+Ảnh chụp màn hình người dùng cung cấp đã tìm được đúng loại tai nghe, bàn phím và hạt điều. Đây là các ví dụ chức năng, không phải bộ đánh giá độ chính xác hoặc độ đa dạng có tính thống kê. Catalog hiện vẫn có 60 sản phẩm và 8 danh mục. Báo cáo Word và việc điền thông tin bìa còn cần hoàn thiện trước khi nộp.
 
 ## Client Module
 
@@ -149,7 +158,7 @@ Bản nghiệp vụ 316a2ac đã ghép cả bốn phần, sửa header Admin tr�
 Đã cài sạch cùng máy từ GitHub, Composer lock và database mới; bộ 79 test đạt trên SQLite/MySQL, 636 assertions. Browser đã thử mua hàng, hoàn thành/hủy đơn và các viewport 375/768/1440 px. Máy thứ hai đang chờ thành viên gửi kết quả. Bản Word được cập nhật nội dung, chưa kiểm tra bố cục bằng renderer vì thiếu LibreOffice; cần kiểm tra trước khi nộp.
 
 
-## Tìm sản phẩm bằng ảnh (nhánh feat/visual-search)
+## Tìm sản phẩm bằng ảnh
 
 Trang `/search/image` nhận ảnh JPG/PNG/WebP tối đa 2 MB, tối đa 6000 × 6000 pixel. Khách có thể chọn ảnh hoặc mở camera, xem ảnh trước khi tìm và thêm kết quả vào giỏ. Camera trực tiếp cần HTTPS hoặc localhost và quyền camera; thiết bị cảm ứng có thể dùng trình chụp ảnh của hệ điều hành khi trình duyệt hỗ trợ `capture`. Không bật camera tự động khi mở trang.
 

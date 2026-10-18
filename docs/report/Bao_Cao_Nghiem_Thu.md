@@ -96,3 +96,22 @@ Hướng dẫn máy khác: [INSTALL_ACCEPTANCE.md](../INSTALL_ACCEPTANCE.md). K�
 - Điền thông tin bìa, xác nhận phân công thực tế và tập dượt kịch bản chung.
 
 Nhánh tích hợp đã chứa đủ module; chưa gộp main khi các điều kiện nghiệm thu còn mở.
+
+
+## 9 Bản demo đóng gói có tìm kiếm bằng ảnh
+
+Ngày 18/10/2026, nhóm bổ sung tìm sản phẩm bằng ảnh trên mã chức năng `afe7a0b`, đưa vào `integration/admin-cart` và đóng gói tại tag `demo-2026-10-18`. Bộ ảnh mẫu đã đổi thành ảnh sản phẩm thật; dữ liệu hiện vẫn có 60 sản phẩm, 8 danh mục. Các ảnh và số liệu ở mục trước thuộc lượt nghiệm thu nghiệp vụ trước khi đổi giao diện.
+
+Thành phần tìm ảnh sử dụng OpenCLIP 3.3.0, mô hình ViT-B/32 đã huấn luyện trên LAION, checkpoint cố định. Laravel kiểm tra file, lấy catalog hiện tại và gọi dịch vụ Python cục bộ; dịch vụ mã hóa ảnh, so sánh cosine với vector ảnh sản phẩm đã lưu, lọc/xếp hạng và trả mã sản phẩm. Giá, tồn kho và thao tác giỏ vẫn lấy từ hệ thống bán hàng. Không huấn luyện mô hình từ đầu và không lưu ảnh truy vấn vào tài khoản.
+
+Bộ kiểm thử bản mới: 88/88 đạt với 676 assertions trên SQLite. Kiểm tra mô hình thật cho thấy tìm được ảnh tai nghe qua trình duyệt và thêm giỏ thành công; ảnh xoay/đổi sáng của 8 sản phẩm đều trả đúng sản phẩm ở đầu. Một ảnh chụp màn hình không liên quan trả rỗng. Dịch vụ tắt trả thông báo chưa sẵn sàng; đổi ảnh hoặc loại sản phẩm khỏi catalog cập nhật chỉ mục ở lượt tìm tiếp theo. Đây là kiểm tra chức năng và biến đổi ảnh đơn giản, không phải bộ đo độ chính xác độc lập.
+
+Người dùng cung cấp thêm ba ví dụ: ảnh thực tế tai nghe, bàn phím và ảnh hạt điều trả đúng loại sản phẩm. Do catalog còn ít mẫu cùng nhóm và chưa có bộ dữ liệu kiểm thử riêng đủ lớn, chưa kết luận về độ đa dạng, độ chính xác tổng quát hoặc tỷ lệ nhận diện.
+
+![Trang tìm kiếm ảnh trong bản demo](../demo/11-visual-search.png)
+
+Ảnh truy vấn minh họa phía trên là biến đổi từ ảnh catalog để kiểm tra luồng, không phải bằng chứng kiểm thử bằng ảnh chụp độc lập.
+
+![Trang chủ và nút tìm bằng ảnh](../demo/12-home-image-search-button.png)
+
+Người dùng xác nhận máy vật lý thứ hai chưa cài thử, sẽ nhờ thành viên thực hiện. Bản đóng gói là bản demo để tập dượt và kiểm tra cài đặt; việc nghiệm thu máy thứ hai, bổ sung thông tin bìa và cập nhật/kiểm tra bố cục Word vẫn cần hoàn thành trước khi nộp báo cáo.

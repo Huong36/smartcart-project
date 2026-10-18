@@ -13,10 +13,10 @@ Phần đơn hàng Admin thuộc thành viên 3 theo bảng phân công. Thành 
 
 ## Tạo nhánh và gửi Pull Request
 
-Mỗi người clone từ main, tự tạo nhánh của mình (thay tên nhánh cho đúng thành viên):
+Trong giai đoạn nghiệm thu, mỗi người clone từ `integration/admin-cart`, tự tạo nhánh của mình (thay tên nhánh cho đúng thành viên):
 
 ```bash
-git clone https://github.com/Huong36/smartcart-project.git
+git clone --branch integration/admin-cart https://github.com/Huong36/smartcart-project.git
 cd smartcart-project
 git switch -c feat/admin-products
 ```
@@ -29,11 +29,11 @@ git commit -m "feat: implement category CRUD"
 git push -u origin feat/admin-products
 ```
 
-Mở Pull Request vào main, ghi chức năng đã làm và cách kiểm tra. Trưởng nhóm kiểm tra rồi merge. Mỗi người commit bằng tài khoản của chính mình. Lấy code mới trước khi tiếp tục:
+Mở Pull Request vào `integration/admin-cart`, ghi chức năng đã làm và cách kiểm tra. Trưởng nhóm kiểm tra rồi merge. Mỗi người commit bằng tài khoản của chính mình. Lấy code mới trước khi tiếp tục:
 
 ```bash
 git fetch origin
-git merge origin/main
+git merge origin/integration/admin-cart
 ```
 
 ## Điểm tích hợp đã có
@@ -65,3 +65,8 @@ git merge origin/main
 - [x] Chi tiết sản phẩm, search/filter/phân trang đã tích hợp.
 - [x] Cart, checkout, lịch sử/duyệt/hủy đơn, live search và API ngoài đã tích hợp; xem checklist về phạm vi kiểm thử.
 - [ ] Báo cáo Word/PDF cuối cùng và chạy thử trên máy các thành viên.
+
+
+## Bản demo để tập dượt trước báo cáo
+
+Tag `demo-2026-10-18` là snapshot chung, có ảnh thật và tìm bằng ảnh. Thành viên muốn sửa tiếp phải lấy nhánh tích hợp mới, không dùng `main` cũ. Số 1 phụ trách phần tích hợp mô hình và giải thích luồng vector/cosine; số 2 phụ trách nội dung catalog và nguồn ảnh, các thành viên vẫn cần nắm phạm vi chung. Kết quả cài trên máy thứ hai đang chờ thành viên gửi, chưa được đánh dấu đạt.
