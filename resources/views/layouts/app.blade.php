@@ -27,6 +27,7 @@
                     </span>
                     <input type="text" class="form-control border-start-0 ps-0" id="navbar-live-search" placeholder="Tìm sản phẩm (tối thiểu 2 ký tự)..." aria-label="Tìm kiếm sản phẩm" aria-describedby="search-addon" autocomplete="off">
                 </div>
+                <a class="image-search-nav" href="{{ route('search.image') }}">Tìm bằng ảnh</a>
                 {{-- Dropdown kết quả gợi ý Live Search --}}
                 <div id="navbar-search-dropdown" class="search-dropdown d-none" role="region" aria-live="polite"></div>
             </div>

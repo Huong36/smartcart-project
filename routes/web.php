@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ImageSearchController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController as ClientProductController;
 use App\Http\Controllers\SearchController;
@@ -29,6 +30,8 @@ Route::prefix('cart')->name('cart.')->group(function () {
 
 // Live Search / Auto-suggest API
 Route::get('/search/suggest', [SearchController::class, 'suggest'])->name('search.suggest');
+Route::get('/search/image', [ImageSearchController::class, 'index'])->name('search.image');
+Route::post('/search/image', [ImageSearchController::class, 'search'])->middleware('throttle:10,1')->name('search.image.submit');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

@@ -220,3 +220,21 @@ a:hover { color: #372417; }
 .flash-toast { width:320px; max-width:100%; background:#fff; color:#3e342c; border:1px solid #e4dcd5; border-left:3px solid #b65028; border-radius:6px; box-shadow:0 4px 16px #33271f15; font-size:.875rem; }
 .flash-toast .toast-body { flex:1; padding:14px 16px; }
 @media(max-width:767.98px) { .flash-toast-container { bottom:16px; right:16px; } }
+
+.image-search-nav { display:block; font-size:.7rem; text-align:right; padding-top:4px; }
+.image-search-heading h1 { font-size:1.8rem; font-weight:650; margin:5px 0 12px; }
+.image-search-heading p { color:#75685f; margin-bottom:28px; }
+.image-search-layout { display:grid; grid-template-columns:310px minmax(0,1fr); gap:30px; align-items:start; }
+.image-search-upload { padding:20px; border:1px solid #e6ddd6; border-radius:8px; background:#fff; }
+.image-search-preview { min-height:220px; display:grid; place-items:center; background:#f6f3ef; border-radius:5px; overflow:hidden; color:#8b7f75; font-size:.85rem; }
+.image-search-preview img { max-width:100%; max-height:280px; object-fit:contain; }
+.image-source-buttons { display:flex; gap:10px; margin-top:14px; }
+.image-source-buttons .btn { flex:1; font-size:.8rem; }
+.image-search-hint { font-size:.75rem; line-height:1.7; color:#75685f; margin:16px 0; }
+.image-search-privacy { font-size:.7rem; line-height:1.6; color:#8b7f75; margin:14px 0 0; }
+.image-search-results h2 { font-size:1.1rem; margin:4px 0 14px; }
+#image-search-status { font-size:.86rem; color:#75685f; }
+#image-search-error { background:#fff0e9; border:1px solid #efd5c6; padding:12px; border-radius:5px; margin-bottom:18px; font-size:.85rem; color:#a34728; }
+#image-camera-video { display:block; width:100%; background:#222; margin-top:15px; border-radius:5px; }
+#image-search-results .product-card h3 { font-size:.83rem; }
+@media(max-width:767.98px) { .image-search-layout { grid-template-columns:1fr; gap:26px; } .image-search-heading h1 { font-size:1.5rem; } .image-search-heading p { font-size:.86rem; } .image-search-preview { min-height:170px; } .image-search-preview img { max-height:220px; } }

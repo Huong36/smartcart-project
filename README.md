@@ -147,3 +147,42 @@ Bản nghiệp vụ 316a2ac đã ghép cả bốn phần, sửa header Admin tr�
 - [Checklist và kết quả thực tế](docs/TEST_CHECKLIST.md).
 
 Đã cài sạch cùng máy từ GitHub, Composer lock và database mới; bộ 79 test đạt trên SQLite/MySQL, 636 assertions. Browser đã thử mua hàng, hoàn thành/hủy đơn và các viewport 375/768/1440 px. Máy thứ hai đang chờ thành viên gửi kết quả. Bản Word được cập nhật nội dung, chưa kiểm tra bố cục bằng renderer vì thiếu LibreOffice; cần kiểm tra trước khi nộp.
+
+
+## Tìm sản phẩm bằng ảnh (nhánh feat/visual-search)
+
+Trang `/search/image` nhận ảnh JPG/PNG/WebP tối đa 2 MB, tối đa 6000 × 6000 pixel. Khách có thể chọn ảnh hoặc mở camera, xem ảnh trước khi tìm và thêm kết quả vào giỏ. Camera trực tiếp cần HTTPS hoặc localhost và quyền camera; thiết bị cảm ứng có thể dùng trình chụp ảnh của hệ điều hành khi trình duyệt hỗ trợ `capture`. Không bật camera tự động khi mở trang.
+
+Laravel kiểm tra file và gửi ảnh trong bộ nhớ tới dịch vụ Python **trên máy cục bộ**. Ảnh truy vấn không được lưu vào tài khoản hoặc storage. Dịch vụ chỉ lắng nghe `127.0.0.1:8020`, yêu cầu token nội bộ tạo trong `storage/app/private/visual-search/token`. Không đưa token, cache vector, mô hình hoặc môi trường Python lên Git.
+
+### Chạy trên máy thành viên
+
+Đã thử bằng Python **3.12**, OpenCLIP 3.3.0, PyTorch 2.14.1 CPU và torchvision 0.29.1 CPU trên Windows. Không cần GPU hoặc API trả phí. Ngoài bước cài thư viện và tải trọng số lần đầu, tìm kiếm ảnh chạy cục bộ. Máy mới cần dung lượng cho môi trường Python và khoảng 600 MB trọng số mô hình; lần khởi động đầu cần Internet.
+
+Tại thư mục gốc dự án, tạo môi trường riêng trong PowerShell:
+
+```powershell
+py -3.12 -m venv .venv-visual-search
+.\.venv-visual-search\Scripts\python.exe -m pip install torch==2.14.1 torchvision==0.29.1 --index-url https://download.pytorch.org/whl/cpu
+.\.venv-visual-search\Scripts\python.exe -m pip install -r app/Services/visual-search-requirements.txt
+.\.venv-visual-search\Scripts\python.exe app/Services/visual_search.py
+```
+
+Giữ terminal dịch vụ Python mở. Terminal thứ hai chạy Laravel như hướng dẫn cài đặt ở trên. Không cần cấu hình API key. Mặc định URL dịch vụ là `VISUAL_SEARCH_URL=http://127.0.0.1:8020`; nếu đổi cổng Python bằng `--port`, phải đổi biến này tương ứng. Nếu chạy dịch vụ cho một bản cài khác, dùng `--root DUONG_DAN_THU_MUC_LARAVEL` để cùng đọc đúng storage và token của bản đó. Token của hai bản cài khác nhau không dùng chung.
+
+Trọng số lưu ở `~/.cache/smartcart-clip`; có thể đổi bằng biến môi trường Python `VISUAL_SEARCH_MODEL_CACHE`. Dùng đường dẫn ngắn trên Windows. Lần chạy tiếp theo nạp checkpoint đã lưu, không tải lại. Cache vector lưu trong private storage của từng bản cài.
+
+### Cách tìm và cập nhật dữ liệu
+
+Mô hình mã hóa ảnh thành vector, chuẩn hóa L2 rồi tính tích vô hướng giữa các vector (tương đương cosine similarity). Ảnh catalog được băm SHA-256: ảnh mới hoặc thay đổi nội dung sẽ được tính lại ở lượt tìm kế tiếp; sản phẩm đã xóa được loại khỏi tập tìm. Giá, tồn kho và đường dẫn sản phẩm lấy từ dữ liệu Laravel, không lấy từ mô hình. Lần tìm đầu xây chỉ mục nên lâu hơn những lượt sau.
+
+Kết quả tối đa 8 sản phẩm. Ngưỡng ban đầu `VISUAL_SEARCH_MIN_SIMILARITY=0.45`; ngoài ngưỡng tuyệt đối, chỉ giữ kết quả cách điểm cao nhất không quá 0.12 để giảm gợi ý lạc nhóm. Đây là tham số thử nghiệm, **chưa được hiệu chỉnh trên bộ ảnh chụp độc lập** và không bảo đảm loại được mọi ảnh ngoài catalog. Điểm cosine không phải xác suất đúng; giao diện không hiển thị phần trăm độ tin cậy. Không có kết quả đủ gần thì hiển thị thông báo, không thay bằng sản phẩm ngẫu nhiên. Nếu dịch vụ tắt/lỗi, giao diện báo chưa sẵn sàng.
+
+Hiện catalog vẫn có 60 sản phẩm. Kiểm tra ban đầu gồm ảnh catalog được xoay/đổi sáng và một ảnh chụp màn hình không liên quan; các kết quả đó chỉ kiểm tra luồng và khả năng chịu biến đổi đơn giản, không chứng minh độ chính xác trên ảnh camera thực tế. Nhóm cần bổ sung ảnh chụp riêng, ảnh ngoài catalog và nhiều mẫu cùng nhóm trước nghiệm thu tính năng.
+
+### Nguồn và giấy phép
+
+- Thư viện: [OpenCLIP](https://github.com/mlfoundations/open_clip), phiên bản 3.3.0, [giấy phép MIT](https://github.com/mlfoundations/open_clip/blob/main/LICENSE).
+- Trọng số: [LAION CLIP ViT-B/32 laion2B-s34B-b79K](https://huggingface.co/laion/CLIP-ViT-B-32-laion2B-s34B-b79K), model card khai báo MIT. Khóa revision `1a25a446712ba5ee05982a381eed697ef9b435cf` để dữ liệu vector không bị trộn giữa các checkpoint.
+- Nhóm không huấn luyện mô hình từ đầu. Phần tích hợp của SmartCart gồm kiểm tra ảnh, dịch vụ cục bộ, quản lý chỉ mục/cache, xếp hạng/lọc kết quả, giao diện camera/upload, kết nối giỏ và kiểm thử.
+- Nguồn và quyền sử dụng ảnh sản phẩm cần được thành viên chuẩn bị catalog bổ sung riêng; giấy phép mô hình không cấp quyền đối với các ảnh sản phẩm đó.

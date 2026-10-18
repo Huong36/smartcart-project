@@ -27,3 +27,7 @@ Homestead.yaml
 Thumbs.db
 /phpunit.mysql.local.xml
 /.env.testing
+
+/.venv-visual-search
+__pycache__/
+/storage/app/private/visual-search/

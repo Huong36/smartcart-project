@@ -6,7 +6,7 @@
         <p class="eyebrow"><span class="eyebrow-dot"></span> MỘT CHÚT MỚI MẺ CHO MỖI NGÀY</p>
         <h1 id="hero-title">Chọn điều bạn thích.<br><em>Sống theo cách bạn.</em></h1>
         <p class="hero-description">Từ góc làm việc đến những phút thư giãn. Khám phá những món đồ cho cuộc sống của riêng bạn.</p>
-        <div class="hero-actions"><a href="#products-heading" class="btn btn-primary btn-lg">Khám phá sản phẩm <span aria-hidden="true">↗</span></a><a href="{{ route('cart.index') }}" class="hero-secondary">Giỏ hàng của bạn <span aria-hidden="true">→</span></a></div>
+        <div class="hero-actions"><a href="#products-heading" class="btn btn-primary btn-lg">Khám phá sản phẩm <span aria-hidden="true">↗</span></a><a href="{{ route('search.image') }}" class="hero-secondary">Tìm bằng ảnh <span aria-hidden="true">→</span></a></div>
         <div class="hero-note"><span class="hero-note-icon" aria-hidden="true">✓</span> Thanh toán khi nhận hàng · Miễn phí giao hàng</div>
     </div>
     <div class="store-hero-visual"><img src="{{ asset('images/storefront-hero-apricot.png') }}" alt="Túi vải, tai nghe và đồ dùng cho cuộc sống mỗi ngày" fetchpriority="high" width="1536" height="1024"></div>
