@@ -25,9 +25,13 @@
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
                         </svg>
                     </span>
-                    <input type="text" class="form-control border-start-0 ps-0" id="navbar-live-search" placeholder="Tìm sản phẩm (tối thiểu 2 ký tự)..." aria-label="Tìm kiếm sản phẩm" aria-describedby="search-addon" autocomplete="off">
+                    <input type="text" class="form-control border-start-0 ps-0" id="navbar-live-search" placeholder="Tìm sản phẩm..." aria-label="Tìm kiếm sản phẩm" aria-describedby="navbar-search-hint" autocomplete="off">
+                    <a class="image-search-nav" href="{{ route('search.image') }}" aria-label="Tìm sản phẩm bằng ảnh" title="Chụp hoặc chọn ảnh để tìm sản phẩm">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="4"/></svg>
+                        <span>Tìm bằng ảnh</span>
+                    </a>
                 </div>
-                <a class="image-search-nav" href="{{ route('search.image') }}">Tìm bằng ảnh</a>
+                <span id="navbar-search-hint" class="visually-hidden">Nhập ít nhất 2 ký tự để xem gợi ý sản phẩm.</span>
                 {{-- Dropdown kết quả gợi ý Live Search --}}
                 <div id="navbar-search-dropdown" class="search-dropdown d-none" role="region" aria-live="polite"></div>
             </div>
