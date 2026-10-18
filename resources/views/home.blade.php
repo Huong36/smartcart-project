@@ -44,5 +44,4 @@
     </div>
     <div class="catalog-pagination">{{ $products->links() }}</div>
 </section>
-<section class="store-closing"><div><p class="eyebrow">SMALL CHOICES. EVERYDAY JOY.</p><h2>Chút cảm hứng mới,<br>cho những điều thường ngày.</h2></div><a href="#products-heading" class="btn btn-light">Tiếp tục khám phá <span aria-hidden="true">↗</span></a></section>
 @endsection
