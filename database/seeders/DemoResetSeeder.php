@@ -132,7 +132,7 @@ class DemoResetSeeder extends Seeder
             );
 
             foreach ($catData['products'] as [$name, $price, $stock, $description]) {
-                $imagePath = 'products/'.Str::slug($name).'.png';
+                $imagePath = SampleProductImageManager::resolveImagePath($name);
 
                 Product::updateOrCreate(
                     [
@@ -155,15 +155,6 @@ class DemoResetSeeder extends Seeder
      */
     protected function copySampleImages(): void
     {
-        $sourceDir = database_path('seeders/images/products');
-        if (! File::isDirectory($sourceDir)) {
-            return;
-        }
-
-        Storage::disk('public')->makeDirectory('products');
-        foreach (File::files($sourceDir) as $file) {
-            $relativePath = 'products/'.$file->getFilename();
-            Storage::disk('public')->put($relativePath, File::get($file->getRealPath()));
-        }
+        SampleProductImageManager::copySampleImages(true);
     }
 }

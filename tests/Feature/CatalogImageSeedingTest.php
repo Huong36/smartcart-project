@@ -42,13 +42,13 @@ class CatalogImageSeedingTest extends TestCase
         ]);
         $unrelated = Product::factory()->create(['image' => null]);
         Storage::disk('public')->put('products/custom-upload.png', 'user-upload');
-        Storage::disk('public')->put('products/tai-nghe-khong-day.png', 'existing-file');
+        Storage::disk('public')->put('products/tai-nghe-khong-day.jpg', 'existing-file');
 
         $this->seed($seeder);
         $this->seed($seeder);
 
-        $this->assertSame('products/tai-nghe-khong-day.png', $missingImage->fresh()->image);
-        $this->assertSame('products/loa-bluetooth-mini.png', $emptyImage->fresh()->image);
+        $this->assertSame('products/tai-nghe-khong-day.jpg', $missingImage->fresh()->image);
+        $this->assertSame('products/loa-bluetooth-mini.jpg', $emptyImage->fresh()->image);
         $this->assertSame('123456.00', $missingImage->fresh()->price);
         $this->assertSame(0, $missingImage->fresh()->stock);
         $this->assertSame('Mô tả đã chỉnh sửa', $missingImage->fresh()->description);

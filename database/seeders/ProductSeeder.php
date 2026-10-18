@@ -132,7 +132,7 @@ class ProductSeeder extends Seeder
             );
 
             foreach ($catData['products'] as [$name, $price, $stock, $description]) {
-                $imagePath = 'products/'.Str::slug($name).'.png';
+                $imagePath = SampleProductImageManager::resolveImagePath($name);
 
                 $product = Product::firstOrCreate(
                     [
@@ -147,9 +147,7 @@ class ProductSeeder extends Seeder
                     ]
                 );
 
-                if (($product->image === null || $product->image === '') && Storage::disk('public')->exists($imagePath)) {
-                    $product->update(['image' => $imagePath]);
-                }
+                SampleProductImageManager::syncProductImage($product, $imagePath);
             }
         }
     }
@@ -159,17 +157,6 @@ class ProductSeeder extends Seeder
      */
     protected function copySampleImages(): void
     {
-        $sourceDir = database_path('seeders/images/products');
-        if (! File::isDirectory($sourceDir)) {
-            return;
-        }
-
-        Storage::disk('public')->makeDirectory('products');
-        foreach (File::files($sourceDir) as $file) {
-            $relativePath = 'products/'.$file->getFilename();
-            if (! Storage::disk('public')->exists($relativePath)) {
-                Storage::disk('public')->put($relativePath, File::get($file->getRealPath()));
-            }
-        }
+        SampleProductImageManager::copySampleImages(false);
     }
 }
