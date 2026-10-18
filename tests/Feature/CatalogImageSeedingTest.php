@@ -60,6 +60,28 @@ class CatalogImageSeedingTest extends TestCase
         $this->assertDatabaseCount('products', 61);
     }
 
+    public function test_legacy_png_paths_are_upgraded_without_deleting_existing_files(): void
+    {
+        Storage::fake('public');
+        $category = Category::factory()->create(['name' => 'Điện tử', 'slug' => 'dien-tu']);
+        $product = Product::factory()->create([
+            'category_id' => $category->id,
+            'name' => 'Tai nghe không dây',
+            'image' => 'products/tai-nghe-khong-day.png',
+            'price' => 333000,
+            'stock' => 7,
+        ]);
+        Storage::disk('public')->put($product->image, 'original-png-content');
+
+        $this->seed(ProductSeeder::class);
+
+        $this->assertSame('products/tai-nghe-khong-day.jpg', $product->fresh()->image);
+        $this->assertSame('original-png-content', Storage::disk('public')->get('products/tai-nghe-khong-day.png'));
+        Storage::disk('public')->assertExists('products/tai-nghe-khong-day.jpg');
+        $this->assertSame('333000.00', $product->fresh()->price);
+        $this->assertSame(7, $product->fresh()->stock);
+    }
+
     public function test_fresh_install_has_files_for_every_sample_product_image(): void
     {
         Storage::fake('public');

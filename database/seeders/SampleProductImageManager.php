@@ -27,7 +27,7 @@ class SampleProductImageManager
 
     /**
      * Sao chép toàn bộ ảnh mẫu từ thư mục seed sang disk public của Laravel.
-     * Tự động phát hiện thay đổi nội dung để đồng bộ và dọn dẹp ảnh mẫu cũ khác đuôi nếu có.
+     * Chỉ thêm file chưa tồn tại; việc ghi đè phải được yêu cầu qua force.
      *
      * @param  bool  $force  Bắt buộc ghi đè toàn bộ kể cả khi nội dung chưa đổi.
      * @return int Số file đã được sao chép hoặc cập nhật.
@@ -49,58 +49,12 @@ class SampleProductImageManager
             $relativePath = 'products/'.$filename;
             $sourcePath = $file->getRealPath();
             $sourceContent = File::get($sourcePath);
-            $sourceSize = $file->getSize();
 
-            $needsCopy = $force
-                || ! Storage::disk('public')->exists($relativePath)
-                || Storage::disk('public')->size($relativePath) !== $sourceSize
-                || md5(Storage::disk('public')->get($relativePath)) !== md5($sourceContent);
+            $needsCopy = $force || ! Storage::disk('public')->exists($relativePath);
 
             if ($needsCopy) {
                 Storage::disk('public')->put($relativePath, $sourceContent);
                 $copiedCount++;
-            }
-
-            // Dọn dẹp file mẫu cũ cùng slug nhưng khác extension (ví dụ .png cũ khi đã có .jpg mới)
-            $baseName = pathinfo($filename, PATHINFO_FILENAME);
-            $currentExt = strtolower($file->getExtension());
-
-            foreach (static::SUPPORTED_EXTENSIONS as $otherExt) {
-                if ($otherExt === $currentExt) {
-                    continue;
-                }
-
-                $stalePath = 'products/'.$baseName.'.'.$otherExt;
-                if (Storage::disk('public')->exists($stalePath)) {
-                    Storage::disk('public')->delete($stalePath);
-                }
-            }
-        }
-
-        // Đảm bảo public/storage/products nhận đủ ảnh khi public/storage là thư mục vật lý riêng (chưa link symlink trên Windows)
-        $publicStoragePath = public_path('storage');
-        $storageAppPublicPath = storage_path('app/public');
-        if (File::isDirectory($publicStoragePath) && realpath($publicStoragePath) !== realpath($storageAppPublicPath)) {
-            $publicProductsDir = public_path('storage/products');
-            File::ensureDirectoryExists($publicProductsDir);
-
-            foreach (File::files($sourceDir) as $file) {
-                $targetFile = $publicProductsDir.DIRECTORY_SEPARATOR.$file->getFilename();
-                if (! File::exists($targetFile) || File::size($targetFile) !== $file->getSize()) {
-                    File::copy($file->getRealPath(), $targetFile);
-                }
-
-                $baseName = pathinfo($file->getFilename(), PATHINFO_FILENAME);
-                $currentExt = strtolower($file->getExtension());
-                foreach (static::SUPPORTED_EXTENSIONS as $otherExt) {
-                    if ($otherExt === $currentExt) {
-                        continue;
-                    }
-                    $staleTarget = $publicProductsDir.DIRECTORY_SEPARATOR.$baseName.'.'.$otherExt;
-                    if (File::exists($staleTarget)) {
-                        File::delete($staleTarget);
-                    }
-                }
             }
         }
 
@@ -173,10 +127,9 @@ class SampleProductImageManager
         $baseName = Str::slug($product->name);
 
         $isMissing = ($currentImage === null || $currentImage === '');
-        $fileMissingInStorage = ! $isMissing && ! Storage::disk('public')->exists($currentImage);
         $isObsoleteSampleImage = ! $isMissing && $currentImage !== $resolvedImagePath && Str::is("products/{$baseName}.*", $currentImage);
 
-        if ($isMissing || $fileMissingInStorage || $isObsoleteSampleImage) {
+        if ($isMissing || $isObsoleteSampleImage) {
             $product->update(['image' => $resolvedImagePath]);
 
             return true;
