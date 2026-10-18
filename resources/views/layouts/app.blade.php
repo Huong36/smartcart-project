@@ -14,7 +14,7 @@
 <div class="store-announcement"><div class="container"><span>SMART CHOICES. EVERY DAY.</span><span>Thanh toán COD <span aria-hidden="true">·</span> Miễn phí giao hàng</span></div></div>
 <header class="store-header">
     <nav class="navbar navbar-expand-xl container py-3" aria-label="Điều hướng chính">
-        <a class="navbar-brand brand" href="{{ route('home') }}"><span class="brand-mark">S</span> SmartCart<span class="brand-dot">.</span></a>
+        <a class="navbar-brand brand" href="{{ route('home') }}"> SmartCart<span class="brand-dot">.</span></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Mở menu"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="main-nav">
             {{-- Thanh tìm kiếm trực tiếp (Live Search) --}}
@@ -66,7 +66,7 @@
     @yield('content')
 </main>
 <footer class="store-footer mt-auto"><div class="container">
-    <div class="footer-main"><div><a class="brand" href="{{ route('home') }}"><span class="brand-mark">S</span> SmartCart<span class="brand-dot">.</span></a><p>Những lựa chọn nhỏ.<br>Niềm vui cho mỗi ngày.</p></div><div><h2>Khám phá</h2><a href="{{ route('home') }}#products-heading">Tất cả sản phẩm</a><a href="{{ route('cart.index') }}">Giỏ hàng của bạn</a></div><div><h2>Tài khoản</h2>@auth<a href="{{ route('account') }}">Thông tin cá nhân</a><a href="{{ route('orders.index') }}">Đơn hàng của tôi</a>@else<a href="{{ route('login') }}">Đăng nhập</a><a href="{{ route('register') }}">Tạo tài khoản</a>@endauth</div><div class="footer-payment"><span class="footer-payment-icon" aria-hidden="true">✓</span><h2>Mua sắm thật đơn giản</h2><p>Thanh toán khi nhận hàng.<br>Miễn phí giao hàng.</p></div></div>
+    <div class="footer-main"><div><a class="brand" href="{{ route('home') }}"> SmartCart<span class="brand-dot">.</span></a><p>Những lựa chọn nhỏ.<br>Niềm vui cho mỗi ngày.</p></div><div><h2>Khám phá</h2><a href="{{ route('home') }}#products-heading">Tất cả sản phẩm</a><a href="{{ route('cart.index') }}">Giỏ hàng của bạn</a></div><div><h2>Tài khoản</h2>@auth<a href="{{ route('account') }}">Thông tin cá nhân</a><a href="{{ route('orders.index') }}">Đơn hàng của tôi</a>@else<a href="{{ route('login') }}">Đăng nhập</a><a href="{{ route('register') }}">Tạo tài khoản</a>@endauth</div><div class="footer-payment"><span class="footer-payment-icon" aria-hidden="true">✓</span><h2>Mua sắm thật đơn giản</h2><p>Thanh toán khi nhận hàng.<br>Miễn phí giao hàng.</p></div></div>
     {{-- Widget thời tiết TP.HCM (Open-Meteo API) --}}
     <div class="mb-3">
         <div class="weather-footer-box d-flex justify-content-between align-items-center flex-wrap gap-2" id="hcm-weather-widget">

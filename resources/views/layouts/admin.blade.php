@@ -20,7 +20,7 @@
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
             <a class="brand text-decoration-none" href="{{ route('admin.dashboard') }}">
-                <span class="brand-mark">S</span>
+
                 <span>SmartCart</span>
                 <span class="badge bg-dark-subtle text-dark border ms-1 fs-6 fw-normal py-1 px-2 d-none d-sm-inline-block">Admin</span>
             </a>
