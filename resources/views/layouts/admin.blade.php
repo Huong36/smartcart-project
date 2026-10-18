@@ -62,11 +62,11 @@
         <!-- Sidebar Navigation -->
         <aside class="admin-sidebar" id="adminSidebar">
             <div class="d-lg-none d-flex align-items-center justify-content-between p-3 border-bottom border-secondary border-opacity-25">
-                <span class="fw-bold text-white">Menu Quản trị</span>
-                <button type="button" class="btn-close btn-close-white" id="sidebarCloseBtn" aria-label="Đóng"></button>
+                <span class="fw-bold">Menu Quản trị</span>
+                <button type="button" class="btn-close" id="sidebarCloseBtn" aria-label="Đóng"></button>
             </div>
 
-            <div class="admin-nav-heading">Điều hướng chính</div>
+            <div class="admin-nav-heading">Quản trị</div>
             <ul class="admin-nav">
                 <li class="admin-nav-item">
                     <a href="{{ route('admin.dashboard') }}" class="admin-nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
@@ -76,7 +76,7 @@
                 </li>
             </ul>
 
-            <div class="admin-nav-heading">Quản lý kho hàng</div>
+
             <ul class="admin-nav">
                 <li class="admin-nav-item">
                     <a href="{{ route('admin.categories.index') }}" class="admin-nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
@@ -92,9 +92,9 @@
                 </li>
             </ul>
 
-            <div class="admin-nav-heading">Đơn hàng</div>
+
             <ul class="admin-nav"><li class="admin-nav-item"><a href="{{ route('admin.orders.index') }}" class="admin-nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M7 4h10a2 2 0 012 2v14l-4-2-3 2-3-2-4 2V6a2 2 0 012-2zM9 8h6M9 12h6"></path></svg><span>Quản lý đơn hàng</span></a></li></ul>
-            <div class="admin-nav-heading mt-auto">Hệ thống</div>
+            <div class="admin-nav-heading">Hệ thống</div>
             <ul class="admin-nav pb-3">
                 <li class="admin-nav-item">
                     <a href="{{ route('home') }}" class="admin-nav-link">
@@ -114,13 +114,7 @@
         <!-- Main Workspace -->
         <main class="admin-main">
             <!-- Flash Message Alerts -->
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <div>{{ session('success') }}</div>
-                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Đóng"></button>
-                </div>
-            @endif
+            @include('partials.flash-toast')
 
             @if(session('error'))
                 <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 mb-4" role="alert">
@@ -143,6 +137,7 @@
     </div>
 
     <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('js/flash.js') }}" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const sidebar = document.getElementById('adminSidebar');

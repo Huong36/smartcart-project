@@ -215,3 +215,8 @@ a:hover { color: #372417; }
 /* Apricot surfaces with a darker orange for readable controls. */
 .store-announcement { background:#ffe3ce; color:#70412b; }
 .store-announcement .container>span:last-child { color:#70412b; }
+
+.flash-toast-container { position:fixed; bottom:20px; right:20px; z-index:1090; max-width:calc(100vw - 32px); }
+.flash-toast { width:320px; max-width:100%; background:#fff; color:#3e342c; border:1px solid #e4dcd5; border-left:3px solid #b65028; border-radius:6px; box-shadow:0 4px 16px #33271f15; font-size:.875rem; }
+.flash-toast .toast-body { flex:1; padding:14px 16px; }
+@media(max-width:767.98px) { .flash-toast-container { bottom:16px; right:16px; } }

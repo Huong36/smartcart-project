@@ -62,7 +62,7 @@
     </nav>
 </header>
 <main id="main-content" class="container store-main">
-    @if(session('success'))<div class="alert alert-success" role="status">{{ session('success') }}</div>@endif
+    @include('partials.flash-toast')
     @yield('content')
 </main>
 <footer class="store-footer mt-auto"><div class="container">
@@ -82,6 +82,7 @@
 </div></footer>
 <script src="{{ asset('vendor/bootstrap/bootstrap.bundle.min.js') }}" defer></script>
 <script src="{{ asset('vendor/sweetalert2.all.min.js') }}"></script>
+<script src="{{ asset('js/flash.js') }}" defer></script>
 <script src="{{ asset('js/cart.js') }}" defer></script>
 <script src="{{ asset('js/search.js') }}" defer></script>
 <script src="{{ asset('js/weather.js') }}" defer></script>
