@@ -9,7 +9,7 @@
         <div class="hero-actions"><a href="#products-heading" class="btn btn-primary btn-lg">Khám phá sản phẩm <span aria-hidden="true">↗</span></a><a href="{{ route('cart.index') }}" class="hero-secondary">Giỏ hàng của bạn <span aria-hidden="true">→</span></a></div>
         <div class="hero-note"><span class="hero-note-icon" aria-hidden="true">✓</span> Thanh toán khi nhận hàng · Miễn phí giao hàng</div>
     </div>
-    <div class="store-hero-visual"><img src="{{ asset('images/storefront-hero-navy.png') }}" alt="Túi vải, tai nghe và đồ dùng cho cuộc sống mỗi ngày" fetchpriority="high" width="1536" height="1024"></div>
+    <div class="store-hero-visual"><img src="{{ asset('images/storefront-hero-apricot.png') }}" alt="Túi vải, tai nghe và đồ dùng cho cuộc sống mỗi ngày" fetchpriority="high" width="1536" height="1024"></div>
 </section>
 <div class="store-benefits" aria-label="Thông tin mua sắm">
     <div><span class="benefit-icon" aria-hidden="true">▦</span><span><strong>Nhiều lựa chọn, một nơi</strong><small>{{ $categories->count() }} danh mục để khám phá</small></span></div>
