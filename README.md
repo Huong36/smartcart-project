@@ -2,7 +2,7 @@
 
 Bộ khung website bán hàng cho bài tập lớn môn Mã Nguồn Mở, nhóm 4 thành viên. Laravel 13 + MySQL + Eloquent + Blade + Bootstrap 5.
 
-Nhánh `feat/client-orders` phát triển từ `integration/admin-cart`: có CSDL, Auth/role, CRUD Admin, giỏ hàng Fetch, live search và widget thời tiết; bổ sung danh sách sản phẩm phân trang/lọc/sắp xếp, chi tiết sản phẩm, checkout COD, lịch sử đơn của khách và quản lý trạng thái đơn cho Admin. Báo cáo và nghiệm thu cuối cần được nhóm hoàn thiện trước khi nộp.
+Nhánh `integration/admin-cart` đã ghép module `feat/client-orders`: có CSDL, Auth/role, CRUD Admin, giỏ hàng Fetch, live search và widget thời tiết; bổ sung danh sách sản phẩm phân trang/lọc/sắp xếp, chi tiết sản phẩm, checkout COD, lịch sử đơn của khách và quản lý trạng thái đơn cho Admin. Báo cáo và nghiệm thu cuối cần được nhóm hoàn thiện trước khi nộp.
 
 ## Client Module
 
@@ -23,7 +23,7 @@ Kiểm tra riêng module: `php artisan test --compact tests/Feature/ClientOrders
 Yêu cầu PHP **8.3 trở lên**, Composer 2, MySQL 8, Git. Bật MySQL trong Laragon và dùng Terminal của Laragon để PHP/Composer có trong PATH. Nếu Composer báo thiếu ZIP, bật `extension=zip` trong php.ini của PHP đang dùng; kiểm tra bằng `php --ini` và `php -m`.
 
 ```bash
-git clone https://github.com/Huong36/smartcart-project.git
+git clone --branch integration/admin-cart https://github.com/Huong36/smartcart-project.git
 cd smartcart-project
 composer install
 ```
@@ -90,7 +90,7 @@ Không dùng tài khoản demo ở môi trường công khai. `.env`, APP_KEY, v
 | routes/web.php | Route public, guest, auth và admin |
 | docs/TEAM.md | Phân công, branch, giao diện tích hợp, quy tắc nghiệp vụ |
 | docs/ERD.md | Schema và sơ đồ ERD |
-| docs/USE_CASE.md | Actor và chức năng dự kiến để dựng UML |
+| docs/USE_CASE.md | Actor, chức năng và điều kiện truy cập |
 
 Danh mục còn sản phẩm và sản phẩm đã được đặt hàng bị chặn xóa bằng khóa ngoại. Order item lưu `product_name` và `price` tại thời điểm mua. Thống nhất với nhóm trước khi sửa cấu trúc dữ liệu. Xem chi tiết trong [quy ước nhóm](docs/TEAM.md).
 
@@ -119,11 +119,11 @@ Chấp nhận lời mời collaborator, clone bộ khung, tự tạo branch và 
 - Thành viên 3: `feat/client-orders`
 - Thành viên 4: `feat/cart-search`
 
-Trưởng nhóm kiểm tra rồi merge. Xem [phân công chi tiết](docs/TEAM.md). Báo cáo Word/PDF cuối cùng sẽ được viết khi các module hoàn thiện và có ảnh demo thực tế.
+Trưởng nhóm kiểm tra rồi merge. Xem [phân công chi tiết](docs/TEAM.md). Nội dung báo cáo và ảnh demo đã cập nhật theo bản tích hợp; chỉ nộp bản Word/PDF sau khi kiểm tra bố cục và hoàn tất nghiệm thu còn mở.
 
 ## Tài liệu báo cáo và nghiệm thu
 
-- [Khung báo cáo Word](docs/report/Bao_Cao_SmartCart.docx): yêu cầu, thiết kế, các sơ đồ, chức năng, phân công và kiểm thử nền tảng. Thông tin lớp/giảng viên/MSSV và tên thành viên 2–4 để trống để nhóm điền. Các phần chưa triển khai được ghi là dự kiến.
+- [Nguồn báo cáo Word](docs/report/Bao_Cao_SmartCart.docx): đã cập nhật nội dung và ảnh demo, đang chờ kiểm tra bố cục. Thông tin lớp/giảng viên/MSSV và tên thành viên 2–4 để trống để nhóm điền. Báo cáo nghiệm thu Markdown ghi riêng kết quả đã đạt và các mục còn chờ.
 - [ERD](docs/ERD.md) và [UML Use Case](docs/USE_CASE.md): có ảnh PNG để chèn báo cáo và nguồn draw.io chỉnh sửa trong docs/diagrams.
 - [Checklist kiểm thử tích hợp](docs/TEST_CHECKLIST.md): trạng thái đã qua nền tảng tách biệt với ca chưa chạy. Cập nhật kết quả và bằng chứng theo commit sau khi ghép module.
 
@@ -136,3 +136,14 @@ Báo cáo cuối cần bổ sung ảnh demo thực tế, kết quả nghiệm th
 - [Bootstrap 5.3](https://getbootstrap.com/docs/5.3/)
 
 Bootstrap 5.3.3 được phân phối theo MIT, xem public/vendor/bootstrap/LICENSE.
+
+## Nghiệm thu và chuẩn bị báo cáo ngày 18/10/2026
+
+Bản nghiệp vụ 316a2ac đã ghép cả bốn phần, sửa header Admin trên mobile. Chưa gộp main khi nghiệm thu còn mở.
+
+- [Hướng dẫn cài và xác nhận máy thứ hai](docs/INSTALL_ACCEPTANCE.md).
+- [Kịch bản thuyết trình cho bốn thành viên](docs/PRESENTATION_SCRIPT.md).
+- [Báo cáo nghiệm thu có ảnh demo](docs/report/Bao_Cao_Nghiem_Thu.md).
+- [Checklist và kết quả thực tế](docs/TEST_CHECKLIST.md).
+
+Đã cài sạch cùng máy từ GitHub, Composer lock và database mới; bộ 79 test đạt trên SQLite/MySQL, 636 assertions. Browser đã thử mua hàng, hoàn thành/hủy đơn và các viewport 375/768/1440 px. Máy thứ hai đang chờ thành viên gửi kết quả. Bản Word được cập nhật nội dung, chưa kiểm tra bố cục bằng renderer vì thiếu LibreOffice; cần kiểm tra trước khi nộp.

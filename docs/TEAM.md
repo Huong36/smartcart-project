@@ -2,7 +2,7 @@
 
 Bộ khung do thành viên 1 chuẩn bị gồm Laravel 13, MySQL, model và migration, seeder, Auth, middleware phân quyền, layout Bootstrap, trang tài khoản và tổng quan Admin.
 
-| Thành viên | GitHub | Branch gợi ý | Công việc tiếp theo |
+| Thành viên | GitHub | Branch gợi ý | Module phụ trách |
 |---|---|---|---|
 | 1 — Trần Xuân Hướng | Huong36 | feat/setup-auth | Nền tảng, tích hợp, ERD, Use Case, báo cáo |
 | 2 | dle1102 | feat/admin-products | CRUD danh mục/sản phẩm, upload ảnh, Form Request, hoàn thiện dữ liệu mẫu |
@@ -55,13 +55,13 @@ git merge origin/main
 - Checkout đọc giá từ DB, kiểm tra tồn kho, dùng transaction và khóa hàng (`lockForUpdate()`), trừ tồn kho và tạo order/items trong cùng transaction. Không tin tổng tiền do trình duyệt gửi.
 - Lịch sử/chi tiết đơn khách phải truy vấn qua `$request->user()->orders()` để ngăn xem đơn người khác. Các thao tác Admin nằm trong group bảo vệ.
 - Trang danh sách dùng `with('category')`, `paginate(8)->withQueryString()`. Live search giới hạn số kết quả, tránh trả toàn bộ DB.
-- Seeder đã có 5 danh mục và 30 sản phẩm; chạy lại không tạo trùng. Thành viên 2 tiếp tục hoàn thiện ảnh thật và dữ liệu trong `CatalogSeeder`.
+- Seeder đã có 8 danh mục và 60 sản phẩm; chạy lại không tạo trùng. Thành viên 2 tiếp tục hoàn thiện ảnh thật và dữ liệu trong `CatalogSeeder`.
 
 ## Trạng thái bàn giao
 
 - [x] Nền tảng, CSDL, Auth/role, dữ liệu mẫu, giao diện nền, tổng quan Admin.
 - [x] Hướng dẫn setup, quy ước nhóm, ERD/UML dạng ảnh và draw.io, khung báo cáo Word và checklist kiểm thử tích hợp.
-- [ ] CRUD danh mục/sản phẩm, upload ảnh và validation tương ứng.
-- [ ] Chi tiết sản phẩm, search/filter/phân trang hoàn chỉnh.
-- [ ] Cart, checkout, lịch sử/duyệt đơn, live search và API ngoài.
+- [x] CRUD danh mục/sản phẩm, upload ảnh và validation; đã tích hợp.
+- [x] Chi tiết sản phẩm, search/filter/phân trang đã tích hợp.
+- [x] Cart, checkout, lịch sử/duyệt/hủy đơn, live search và API ngoài đã tích hợp; xem checklist về phạm vi kiểm thử.
 - [ ] Báo cáo Word/PDF cuối cùng và chạy thử trên máy các thành viên.

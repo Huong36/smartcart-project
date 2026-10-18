@@ -44,6 +44,7 @@ erDiagram
         text shipping_address
         varchar phone
         text note
+        uuid checkout_token UK
     }
     ORDER_ITEMS {
         bigint id PK
@@ -70,4 +71,4 @@ Tất cả bảng có `created_at`, `updated_at`. Users còn có `email_verified
 
 Khác bản kế hoạch ban đầu, xóa danh mục không cascade sang sản phẩm. Quy tắc restrict ngăn mất sản phẩm ngoài ý muốn và bảo vệ lịch sử mua hàng. Chỉ order_items phụ thuộc hoàn toàn vào orders nên dùng cascade ở quan hệ đó. Các chức năng CRUD phải báo lý do khi không thể xóa.
 
-Giá và tổng tiền dùng decimal(12,2); order_items giữ giá/tên tại thời điểm mua. Checkout và kiểm soát tồn kho thuộc phần triển khai của thành viên 3.
+Giá và tổng tiền dùng decimal(12,2); order_items giữ giá/tên tại thời điểm mua. Checkout và kiểm soát tồn kho đã tích hợp. orders.checkout_token nullable/unique được thêm bằng migration 2026_10_17_222305 để chống gửi lặp; ảnh ERD ban đầu thể hiện cấu trúc nền, phần mở rộng này được ghi tại đây.

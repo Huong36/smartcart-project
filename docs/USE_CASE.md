@@ -1,6 +1,6 @@
 # Use Case SmartCart
 
-Phạm vi bên dưới mô tả toàn bộ đề tài dự kiến. Bộ khung hiện đã triển khai đăng ký, đăng nhập/đăng xuất, tài khoản, phân quyền và tổng quan Admin. Các chức năng mua hàng/CRUD còn lại thuộc các thành viên 2–4.
+Các module đã được tích hợp trên integration/admin-cart: Auth/role, CRUD, tìm kiếm/phân trang, giỏ, checkout COD và quản lý đơn. Mức độ nghiệm thu từng chức năng xem TEST_CHECKLIST.md.
 
 ## Sơ đồ UML khách vãng lai và khách hàng
 
